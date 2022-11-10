@@ -10,6 +10,31 @@ import 'element-plus/theme-chalk/display.css'
 import './style.css'
 import App from './App.vue'
 
+/**
+ *   fontawesome icons
+ */
+/* import fontawesome core */
+import { library } from '@fortawesome/fontawesome-svg-core'
+/* import font awesome icon component */
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+/* treeshake specific icons */
+import {
+  faBars,
+  faCircleArrowRight,
+  faChevronRight,
+  faChevronDown,
+  faCircleArrowDown
+} from '@fortawesome/free-solid-svg-icons'
+
+/* add icons to the library */
+library.add(
+  faBars,
+  faChevronRight,
+  faChevronDown,
+  faCircleArrowRight,
+  faCircleArrowDown
+)
+
 const pinia = createPinia()
 
 const i18n = createI18n({
@@ -19,6 +44,7 @@ const i18n = createI18n({
 })
 
 const app = createApp(App)
+app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(i18n)
 app.use(pinia)
 app.use(router)
