@@ -9,6 +9,9 @@ export const accountStore = defineStore({
       permission: '0',
       roles: []
     },
+    //  super important that this is null
+    //  app won't mount until it is set to a user
+    //  or to a guest ( where token is 0, not null)
     token: null
   }),
   actions: {
@@ -23,7 +26,9 @@ export const accountStore = defineStore({
         permission: '0',
         roles: []
       }
-      this.token = null
+      //  note that we set the store token to 0 while
+      //  we set localstorage token to null
+      this.token = 0
       localStorage.setItem('account', null)
       localStorage.setItem('token', null)
     },

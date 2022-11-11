@@ -1,5 +1,9 @@
 <template>
-  <div v-if="authCompleted">
+  <!-- IMPORTANT!!!!
+    DO NOT LOAD UNTIL WE HAVE A TOKEN !!!!!
+    it is null when pinia instantiates, will be set to 0 when account (user) is set
+  -->
+  <div v-if="authCompleted && token">
     <el-drawer
       v-model="drawerVisible"
       size="180px"
@@ -57,6 +61,9 @@ export default {
   computed: {
     account: () => {
       return accountStore().account
+    },
+    token: () => {
+      return accountStore().token
     }
   },
   methods: {
@@ -74,10 +81,14 @@ export default {
     
     if (account && token) {
       api.account.authorizeToken( token ).then( (response) => {
+        console.log('auth token @ refresh', token)
+        console.log('response', response)
         if(response.data.decoded.account){
           accountStore().setAccount( response.data.decoded.account )
+          accountStore().setToken( token )
         }
       }).catch( err => {
+        console.log(err)
         accountStore().setAccountToGuest()
         this.$router.push('/Login')
       })

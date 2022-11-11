@@ -1,6 +1,7 @@
 <template>
   <el-menu @select="menuSelect" :router="true">
     <el-menu-item index="/Home">{{ $t('message.homePage') }}</el-menu-item>
+    <el-menu-item index="/resView3">resView3</el-menu-item>
   </el-menu>
 </template>
 

@@ -76,7 +76,7 @@ export default {
             center: true
           })
           //  navigate
-          this.$router.push('/')
+          this.$router.push('Home')
         } else {
           //  show user the login has failed
           this.loginResponse = 'Login Failed'

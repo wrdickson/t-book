@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     proxy: {
-      '/api': 'http://localhost'
+      '/api-book': 'http://localhost'
     }
   }
 })
