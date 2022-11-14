@@ -12,7 +12,7 @@ export const accountStore = defineStore({
     //  super important that this is null
     //  app won't mount until it is set to a user
     //  or to a guest ( where token is 0, not null)
-    token: null
+    token: 'notoken'
   }),
   actions: {
     setAccount ( account ) {

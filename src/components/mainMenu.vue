@@ -1,7 +1,16 @@
 <template>
   <el-menu @select="menuSelect" :router="true">
     <el-menu-item index="/Home">{{ $t('message.homePage') }}</el-menu-item>
-    <el-menu-item index="/resView3">resView3</el-menu-item>
+    <el-menu-item
+      v-if="account.permission > 0" 
+      index="/resView3">
+        resView3
+    </el-menu-item>
+    <el-menu-item
+      v-if="account.permission > 1"
+      index="/CreateReservation">
+        CreateReservation
+    </el-menu-item>
   </el-menu>
 </template>
 

@@ -1,9 +1,11 @@
 <template>
   <!-- IMPORTANT!!!!
     DO NOT LOAD UNTIL WE HAVE A TOKEN !!!!!
-    it is null when pinia instantiates, will be set to 0 when account (user) is set
+    Token is null when pinia instantiates, will be set to 0 when account (user) is set
+    after checking if we have a user/token in localStorage, and verifying that.
+    It's an async operation, so we have to wait . . . 
   -->
-  <div v-if="authCompleted && token">
+  <div >
     <el-drawer
       v-model="drawerVisible"
       size="180px"
@@ -79,7 +81,7 @@ export default {
     const account = JSON.parse(localStorage.getItem('account'))
     const token = localStorage.getItem('token')
     
-    if (account && token) {
+    if (account && token!= 0) {
       api.account.authorizeToken( token ).then( (response) => {
         console.log('auth token @ refresh', token)
         console.log('response', response)
@@ -88,10 +90,12 @@ export default {
           accountStore().setToken( token )
         }
       }).catch( err => {
-        console.log(err)
         accountStore().setAccountToGuest()
         this.$router.push('/Login')
       })
+    } else {
+      accountStore().setAccountToGuest()
+      this.$router.push('/Login')
     }
   }
 }
@@ -102,7 +106,7 @@ export default {
     font-family: Tahoma, Verdana, sans-serif;
   }
   .navAside {
-    background-color: rgb(39, 105, 8);
+    background-color: rgb(12, 34, 2);
   }
   .flex-grow {
     flex-grow: 1;

@@ -246,16 +246,18 @@ export default {
     reloadReservations () {
       //  TODO
       //  get reservations from db
-      api.engine.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.jwt)
+      api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.jwt)
         .then( (response) => {
           this.reservations = response.data.reservations
           this.closeResWindow()
         })
     },
     reservationSelected ( resId ) {
+      console.log('res selected', resId )
       this.selectedReservation = _.find(this.reservations, function(o){
         return o.id == resId
       })
+      console.log('sel res', this.selectedReservation)
     },
     rowClassName ( obj) {
     },
@@ -263,12 +265,12 @@ export default {
       this.loading = true
       //  format it
       let fDateSelected = dayjs(nDate).format('YYYY-MM-DD')
-      console.log('fDateSelected:', fDateSelected)
       //  send it to the store
       //  this will react locally
       //  TODO
       resViewStore().startDate = fDateSelected
       //  get reservations from db
+      //  this will update the view
       api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.token)
         .then( (response) => {
           console.log('res by range', response.data.reservations)

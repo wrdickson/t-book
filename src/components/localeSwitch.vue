@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { localeStore } from './../stores/locale.js'
+import { localeStore } from '/src/stores/locale.js'
 export default {
   name: 'LocaleSwitch',
   data() {

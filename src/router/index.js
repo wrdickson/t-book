@@ -3,6 +3,8 @@ import Home from '/src/views/Home.vue'
 import Login from '/src/views/Login.vue'
 import Logoff from '/src/views/Logoff.vue'
 import resView3 from '/src/views/resView3/resView3.vue'
+import CreateReservation from '/src/views/CreateReservation.vue'
+
 const routes = [
     {
       path: '/',
@@ -28,6 +30,11 @@ const routes = [
       path: '/resView3',
       name: 'resView3',
       component: resView3
+    },
+    {
+      path: '/CreateReservation',
+      name: 'CreateReservation',
+      component: CreateReservation
     }
   ]
 const router = createRouter({
