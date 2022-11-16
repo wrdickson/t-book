@@ -1,15 +1,22 @@
 <template>
   <div>
     <el-config-provider :locale="locale">
-      <el-date-picker
-        v-model="dRange"
-        type="daterange"
+      <el-form
+        label-width="120px"
         size="small"
-        :clearable=false
-        :range-separator="rSeperator"
-        :start-placeholder="startPlaceholder"
-        :end-placeholder="endPlaceholder"
-      />
+        >
+          <el-form-item label="Dates">
+            <el-date-picker
+              v-model="dRange"
+              type="daterange"
+              size="small"
+              :clearable=false
+              :range-separator="rSeperator"
+              :start-placeholder="startPlaceholder"
+              :end-placeholder="endPlaceholder"
+            />
+          </el-form-item>
+        </el-form>
     </el-config-provider>
   </div>
 </template>

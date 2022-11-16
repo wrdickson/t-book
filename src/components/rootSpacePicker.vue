@@ -1,14 +1,22 @@
 <template>
   <div>
-    <el-config-provider :locale="locale">
-      <el-select
-        v-if="rootSpaces" v-model="selectedRootSpace" :placeholder="placeholder"
-      >
-        <template v-for="aSpace in availableSpaces">
-          <el-option :label="aSpace.title" :value="aSpace.id"></el-option>
-        </template>
-      </el-select>
-    </el-config-provider>
+    <el-form
+      label-width="120px"
+      size="small"
+      class="cust-form"
+    >
+      <el-form-item label="Space">
+        <el-config-provider :locale="locale">
+          <el-select
+            v-if="rootSpaces" v-model="selectedRootSpace" :placeholder="placeholder"
+          >
+            <template v-for="aSpace in availableSpaces">
+              <el-option :label="aSpace.title" :value="aSpace.id"></el-option>
+            </template>
+          </el-select>
+        </el-config-provider>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
@@ -61,12 +69,11 @@ export default {
   emits: [ 'rootSpacePicker:spaceSelected' ],
   created () {
     api.rootSpaces.getRootSpaces( this.token ).then (( response ) => {
-      this.rootSpaces = response.data.root_spaces
+      this.rootSpaces = response.data.root_spaces_children_parents
     })
   },
   watch: {
     selectedRootSpace ( oldVal, newVal ) {
-      console.log('dammit')
       this.$emit('rootSpacePicker:spaceSelected', this.selectedRootSpace )
     },
     availableSpaceIds (oldval, newval) {
