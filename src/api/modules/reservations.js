@@ -16,6 +16,24 @@ const reservations = {
     })
     return promise
   },
+
+  checkConflicts ( start, end, spaceId, token ) {
+    const promise = axios({
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Jwt': token
+      },
+      data: {
+        'startDate': start,
+        'endDate': end,
+        'spaceId': spaceId
+      },
+      url: '/api-book/reservations/conflicts'
+    })
+    return promise
+  },
+
   getReservationsByRange ( startDate, endDate, token ) {
     const request = axios({
       method: 'post',

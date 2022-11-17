@@ -4,12 +4,18 @@ import Login from '/src/views/Login.vue'
 import Logoff from '/src/views/Logoff.vue'
 import resView3 from '/src/views/resView3/resView3.vue'
 import CreateReservation from '/src/views/CreateReservation.vue'
+import Composables from '/src/views/Composables.vue'
 
 const routes = [
     {
       path: '/',
       name: 'Blank',
       component: Home
+    },
+    {
+      path: '/Composables',
+      name: 'Composables',
+      component: Composables
     },
     {
       path: '/Home',
@@ -37,9 +43,10 @@ const routes = [
       component: CreateReservation
     }
   ]
+
 const router = createRouter({
     history: createWebHashHistory(),
-    routes,
+    routes
 })
 
 export default router

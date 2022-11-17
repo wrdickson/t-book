@@ -9,6 +9,7 @@ const api = {
   customers: customers,
   engine: engine,
   rootSpaces: rootSpaces,
-  reservations: reservations
+  reservations: reservations,
 }
+
 export default api

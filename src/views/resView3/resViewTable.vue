@@ -1,5 +1,5 @@
 <template>
-
+  <el-button @click="ssl">ssl</el-button><el-button @click="sst">sst</el-button>
   <el-table
     ref="resViewTable"
     :data="tableData"
@@ -86,6 +86,19 @@ export default {
     }
   },
   methods: {
+
+
+    ssl () {
+      this.$refs.resViewTable.$refs.scrollBarRef.setScrollLeft(200)
+    },
+    sst () {
+      this.$refs.resViewTable.$refs.scrollBarRef.setScrollTop(200)
+    },
+
+
+
+
+
     c1ToggleShowChildren ( spaceId ) {
       console.log('resViewTable toggle', spaceId)
       //  tell resView to toggle this
@@ -148,6 +161,16 @@ export default {
         }
       }
     }
+  },
+  mounted () {
+    console.log('refs.resViewTable')
+    console.log( this.$refs.resViewTable.$refs )
+    //  see https://github.com/element-plus/element-plus/discussions/9679
+    this.$refs.resViewTable.$refs.scrollBarRef.wrap$.onscroll = (event) => {
+      console.log('left: ', event.target.scrollLeft)
+      console.log('top: ', event.target.scrollTop)
+    }
+
   },
   watch: {
     resSpaceCopy (old, newd){

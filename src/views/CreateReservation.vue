@@ -10,10 +10,14 @@
   </RootSpacePicker>
   <SearchCustomers
     v-if="selectedSpaceId"
-    @searchCustomers:customer-selected="customerSelected">
-
-
+    @searchCustomers:customerSelected="customerSelected">
   </SearchCustomers>
+  <el-form-item
+    v-if="startDate && endDate && selectedCustomer && selectedSpaceId"
+  >
+    <el-button type="primary" @click="createReservation">Create Reservation</el-button>
+    <el-button type="primary" @click="checkConflicts">Check Conflicts</el-button>
+  </el-form-item>
 </template>
 
 <script>
@@ -60,6 +64,17 @@
       }
     },
     methods: {
+      checkConflicts () {
+        api.reservations.checkConflicts( this.fStartDate, this.fEndDate, this.selectedSpaceId, this.token ).then( response => {
+          //console.log('checkConflicts():', response.data )
+          console.log('uhr', useHandleRequestError)
+        }).catch ( error  => {
+          useHandleRequestError(error)
+        })
+      },
+      createReservation () {
+
+      },
       customerSelected ( e ) {
         console.log( e )
         this.selectedCustomer = e

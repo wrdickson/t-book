@@ -81,7 +81,7 @@ export default {
     const account = JSON.parse(localStorage.getItem('account'))
     const token = localStorage.getItem('token')
     
-    if (account && token!= 0) {
+    if (account && token != 0) {
       api.account.authorizeToken( token ).then( (response) => {
         console.log('auth token @ refresh', token)
         console.log('response', response)

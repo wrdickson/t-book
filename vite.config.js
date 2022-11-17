@@ -8,5 +8,6 @@ export default defineConfig({
     proxy: {
       '/api-book': 'http://localhost'
     }
-  }
+  },
+  base: 'https://trekbill.com/t-book/'
 })

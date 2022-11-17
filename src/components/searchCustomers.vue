@@ -104,7 +104,7 @@ import { accountStore } from '/src/stores/account.js'
 import { ElNotification } from 'element-plus'
 export default {
   name: 'SearchCustomers',
-  emits: [ 'searchCustomers:customer-selected' ],
+  emits: [ 'searchCustomers:customerSelected' ],
   data () {
     return {
       customers: [],
@@ -154,7 +154,7 @@ export default {
       }
     },
     selectCustomer (e) {
-      this.$emit('searchCustomers:customer-selected', e)
+      this.$emit('searchCustomers:customerSelected', e)
     }
   },
   watch: {

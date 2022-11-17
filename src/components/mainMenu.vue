@@ -11,6 +11,10 @@
       index="/CreateReservation">
         CreateReservation
     </el-menu-item>
+    <el-menu-item
+      index="/Composables">
+        Composables
+    </el-menu-item>
   </el-menu>
 </template>
 
