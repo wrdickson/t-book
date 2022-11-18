@@ -1,5 +1,4 @@
 <template>
-  <el-button @click="ssl">ssl</el-button><el-button @click="sst">sst</el-button>
   <el-table
     ref="resViewTable"
     :data="tableData"
@@ -12,7 +11,7 @@
     <el-table-column fixed prop="title" :label="spaceLabel" width="120">
     </el-table-column>
 
-    <el-table-column prop="expand" fixed width="20">
+    <el-table-column prop="expand" fixed width="27">
       <template #default="scope">
         <div data-rel-day="0" style="display: flex; align-items: center;">
           <c1
@@ -62,6 +61,8 @@
 <script>
 import resBlock from './resBlock.vue'
 import emptyBlock from './emptyBlock.vue'
+import { resViewStore } from '/src/stores/resView.js'
+import { nextTick } from 'vue'
 import c1 from './C1.vue'
 import dayjs from 'dayjs'
 import _ from 'lodash'
@@ -77,7 +78,6 @@ export default {
   ],
   data () {
     return {
-      iloading: false
     }
   },
   computed: {
@@ -88,14 +88,21 @@ export default {
   methods: {
 
 
-    ssl () {
-      this.$refs.resViewTable.$refs.scrollBarRef.setScrollLeft(200)
+    setInitialScroll () {
+      //  check to see if we have scroll postion in store
+      if( resViewStore().scrollTop > 0 ) {
+        this.setScrollTop(resViewStore().scrollTop)
+      }
+      if (resViewStore().scrollLeft > 0 ) {
+        this.setScrollLeft(resViewStore().scrollLeft)
+      }
     },
-    sst () {
-      this.$refs.resViewTable.$refs.scrollBarRef.setScrollTop(200)
+    setScrollLeft ( leftS ) {
+      this.$refs.resViewTable.$refs.scrollBarRef.setScrollLeft(leftS)
     },
-
-
+    setScrollTop ( topS ) {
+      this.$refs.resViewTable.$refs.scrollBarRef.setScrollTop(topS)
+    },
 
 
 
@@ -163,18 +170,35 @@ export default {
     }
   },
   mounted () {
-    console.log('refs.resViewTable')
-    console.log( this.$refs.resViewTable.$refs )
+ 
+    console.log('resViewTable mounted()')
+
+    //  super hackey here . . .
+    const myTimeout = setTimeout(this.setInitialScroll, 1)
+
+    //  set scroll events
     //  see https://github.com/element-plus/element-plus/discussions/9679
     this.$refs.resViewTable.$refs.scrollBarRef.wrap$.onscroll = (event) => {
       console.log('left: ', event.target.scrollLeft)
+      resViewStore().scrollLeft = event.target.scrollLeft
       console.log('top: ', event.target.scrollTop)
+      resViewStore().scrollTop = event.target.scrollTop
+
+
     }
+
+
 
   },
   watch: {
     resSpaceCopy (old, newd){
       console.log('resSpaceCopy change on resViewTable')
+    },
+    tableData ( ) {
+      console.log('tableData wach triggered on resViewTable')
+    },
+    trigger () {
+      console.log('trigger watch on resViewTable', this.trigger)
     }
   }
 }
@@ -189,6 +213,7 @@ export default {
   padding: 0px !important;
 }
 .el-scrollbar__bar.is-horizontal{
-  height:23px !important;
+  margin-top: -112px !important;
+  height: 9px !important;
 }
 </style>

@@ -5,7 +5,7 @@
     after checking if we have a user/token in localStorage, and verifying that.
     It's an async operation, so we have to wait . . . 
   -->
-  <div >
+  <div v-if="authCompleted">
     <el-drawer
       v-model="drawerVisible"
       size="180px"
@@ -23,10 +23,10 @@
         <el-header class="navHeader">
             <el-menu
               mode="horizontal"
-              :ellipsis="false"
+              :ellipsis="true"
             >
-              <span class="hidden-md-and-up"><el-menu-item @click="showDrawer"><font-awesome-icon icon="fa-solid fa-bars" size="2x" /></el-menu-item></span>
-              <el-menu-item class="navbarBrand" index="1">Trekbill.com</el-menu-item>
+              <span class="hidden-md-and-up"><el-button type="primary" link @click="drawerVisible = true"><font-awesome-icon icon="fa-solid fa-bars" size="2x" /></el-button></span>
+              <el-menu-item class="navbarBrand" index="1" style="border-bottom: 0px;">Trekbill.com</el-menu-item>
               <div class="flex-grow"/>
               <userMenu :account="account"/>
               <localeSwitch/>
@@ -57,7 +57,7 @@ export default {
       //  we don't want the app to start until we have completed
       //  the auth process, the v-if in the wrapper div above
       //  will accomplish this
-      authCompleted: true
+      authCompleted: false
     }
   },
   computed: {
@@ -88,13 +88,16 @@ export default {
         if(response.data.decoded.account){
           accountStore().setAccount( response.data.decoded.account )
           accountStore().setToken( token )
+          this.authCompleted = true
         }
       }).catch( err => {
         accountStore().setAccountToGuest()
+        this.authCompleted = true
         this.$router.push('/Login')
       })
     } else {
       accountStore().setAccountToGuest()
+      this.authCompleted = true
       this.$router.push('/Login')
     }
   }

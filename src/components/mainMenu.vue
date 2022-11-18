@@ -29,7 +29,7 @@
       }
     },
     methods: {
-      menuSelect (a,b,c,d) {
+      menuSelect () {
         this.$emit('mainMenu-select')
       }
     }

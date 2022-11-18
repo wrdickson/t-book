@@ -17,12 +17,14 @@
 <script>
 import dayjs from 'dayjs'
 import { localeStore } from '/src/stores/locale.js'
+import { resViewStore } from '/src/stores/resView.js'
 export default {
   name: 'singelDatePicker',
   emits: ['singleDatePicker:dateSelected'],
   data () {
     return {
-      selectedDate: dayjs().format('YYYY-MM-DD'),
+      //selectedDate: dayjs().format('YYYY-MM-DD'),
+      selectedDate: resViewStore().startDate,
       size: 'default'
     }
   },
@@ -32,11 +34,15 @@ export default {
     },
     locale () {
       return localeStore().selectedLocale
+    },
+    resViewStoreStart () {
+
     }
   },
   mounted () {
+    
     //  send a signal to parent that this is date selected
-    this.$emit('singleDatePicker:dateSelected', this.selectedDate)
+    //this.$emit('singleDatePicker:dateSelected', this.selectedDate)
   },
   watch: {
     selectedDate( newDate, oldDate ) {

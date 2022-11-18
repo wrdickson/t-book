@@ -1,7 +1,6 @@
 <template>
     <el-row>
       <el-col :span="mainColSpan">
-        <el-button @click="reloadReservations">reload reservations</el-button>
         <singleDatePicker
           @singleDatePicker:dateSelected="singleDateSelected"
         />
@@ -229,7 +228,7 @@ export default {
           //  formatted without dashes
           dayString: 'D' +  dayjs(this.resViewStartDate).add(i, 'day').format('YYYYMMDD'),
           //  formatted with dashes
-          dayLabel: dayjs(this.resViewStartDate).add(i, 'day').format('YYYY-MM-DD')
+          dayLabel: dayjs(this.resViewStartDate).add(i, 'day').format('MMM D YYYY')
         }
         dArr.push(iObj)
       }
@@ -242,15 +241,6 @@ export default {
     },
     emptyCellClick ( obj ) {
       console.log('empty cell selected', obj)
-    },
-    reloadReservations () {
-      //  TODO
-      //  get reservations from db
-      api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.jwt)
-        .then( (response) => {
-          this.reservations = response.data.reservations
-          this.closeResWindow()
-        })
     },
     reservationSelected ( resId ) {
       console.log('res selected', resId )
@@ -267,7 +257,6 @@ export default {
       let fDateSelected = dayjs(nDate).format('YYYY-MM-DD')
       //  send it to the store
       //  this will react locally
-      //  TODO
       resViewStore().startDate = fDateSelected
       //  get reservations from db
       //  this will update the view
@@ -332,7 +321,7 @@ export default {
       toggleChildren(k)
       //  now update the store so that show/hide children remains current
       //  TODO
-      //reservationStore().setResSpacesFromObj(this.spaceRecords)
+      resViewStore().setShowHideRootSpaceCopy(this.rootSpaces)
     }
   },
   created () {
@@ -341,11 +330,22 @@ export default {
     this.spaceRecords =  {}
   },
   mounted () {
+      //  do we have a showHideRootSpaceCopy in store?
+      //  this holds user's show/hide preferences
+      console.log('resView3 mounted()')
+      console.log( resViewStore().showHideRootSpaceCopy )
+
+
       //  get space records
-      api.rootSpaces.getRootSpaces( this.token ).then( response => {
-        console.log('resp', response)
-        this.rootSpaces = response.data.root_spaces_children_parents
-      })
+      if( resViewStore().showHideRootSpaceCopy ) {
+        console.log('we have a sHRSC')
+        this.rootSpaces = resViewStore().showHideRootSpaceCopy
+      } else { 
+        console.log('NO sHRSC') 
+        api.rootSpaces.getRootSpaces( this.token ).then( response => {
+          this.rootSpaces = response.data.root_spaces_children_parents
+        })
+      }
 
       //  TODO??
       //  send it to the store
