@@ -5,7 +5,7 @@
       size="small"
       class="cust-form"
     >
-      <el-form-item label="Space">
+      <el-form-item :label="labelSpace">
         <el-config-provider :locale="locale">
           <el-select
             v-if="rootSpaces" v-model="selectedRootSpace" :placeholder="placeholder"
@@ -55,6 +55,9 @@ export default {
         return false
       }
 
+    },
+    labelSpace () {
+      return this.$t('message.spaceLabel')
     },
     locale () {
       return this.$i18n

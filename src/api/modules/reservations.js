@@ -33,6 +33,18 @@ const reservations = {
     })
     return promise
   },
+  /*
+  *@param spaceId int
+  *@param checkin date/string
+  *@param checkout date/string
+  *@param customer int
+  *@param people int
+  *@param beds int
+  */
+
+  createReservation ( checkin, checkout, customer, spaceId, people, beds) {
+
+  },
 
   getReservationsByRange ( startDate, endDate, token ) {
     const request = axios({

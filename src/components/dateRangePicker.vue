@@ -5,7 +5,7 @@
         label-width="120px"
         size="small"
         >
-          <el-form-item label="Dates">
+          <el-form-item :label="labelDates">
             <el-date-picker
               v-model="dRange"
               type="daterange"
@@ -23,10 +23,14 @@
 
 <script>
 import { localeStore } from './../stores/locale.js'
+import { ElMessage } from 'element-plus'
 import dayjs from 'dayjs'
 export default {
   name: 'DateRangePicker',
-  emits: [ 'dateRangePicker:rangeSelected' ],
+  emits: [ 
+    'dateRangePicker:rangeSelected',
+    'dateRangePicker:clearDates'
+  ],
   data () {
     return {
       dRange: null
@@ -38,6 +42,9 @@ export default {
     },
     endPlaceholder () {
       return this.$t('message.endDate')
+    },
+    labelDates () {
+      return this.$t('message.dates')
     },
     locale () {
       return localeStore().selectedLocale
@@ -54,7 +61,20 @@ export default {
   },
   watch: {
     dRange ( oldR, newR ) {
-      this.$emit('dateRangePicker:rangeSelected', this.dRange)
+      if(this.startDate == this.endDate) {
+        ElMessage( {
+          type: 'warning',
+          message: 'Start and end must be different'
+        })
+        this.$emit('dateRangePicker:clearDates')
+      } else {
+        const rVal = [
+          dayjs(this.dRange[0]).format('YYYY-MM-DD'),
+          dayjs(this.dRange[1]).format('YYYY-MM-DD')
+        ]
+        this.$emit('dateRangePicker:rangeSelected', rVal)
+      }
+        
     }
   }
   

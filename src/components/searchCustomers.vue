@@ -1,16 +1,17 @@
 <template>
+  <el-config-provider>
   <el-form
     label-width="120px"
     size="small"
     class="my-form"
   >
-    <el-form-item label="Customer">
+    <el-form-item :label="labelCustomer">
       <el-col :span="11">
-        <el-input v-model="form.lastName" placeholder="Last Name">
+        <el-input v-model="form.lastName" :placeholder="labelLastName">
         </el-input>
       </el-col>
       <el-col :span="11">
-        <el-input v-model="form.firstName" placeholder="First Name">
+        <el-input v-model="form.firstName" :placeholder="labelFirstName">
         </el-input>
       </el-col>
     </el-form-item>
@@ -31,14 +32,14 @@
       fixed
       sortable
       prop="lastName"
-      label="Last Name"
+      :label="labelLastName"
       width="120"
     ></el-table-column>
     <el-table-column
       fixed
       sortable
       prop="firstName"
-      label="First Name"
+      :label="labelFirstName"
       width="120"
     >
     </el-table-column>
@@ -92,10 +93,13 @@
     :total="rowCount" 
     :page-sizes="[1,10,20,30,40,50]"
     />
+  <!--
   <div>RowCount: {{rowCount}}</div>
   <div>CurrentPage: {{currentPage}}</div>
   <div>PageSize: {{pageSize}}</div>
   <div>Offset: {{offset}}</div>
+  -->
+  </el-config-provider>
 </template>
 
 <script>
@@ -118,6 +122,15 @@ export default {
     }
   },
   computed: {
+    labelCustomer () {
+      return this.$t('message.customer')
+    },
+    labelFirstName () {
+      return this.$t('message.firstName')
+    },
+    labelLastName () {
+        return this.$t('message.lastName')
+    },
     offset () {
       return (this.currentPage -1) * this.pageSize
     },
@@ -131,6 +144,8 @@ export default {
       this.form.lastName = ''
       this.rowCount = 0
       this.customers = []
+      //  reset selectdCustomer
+      this.selectCustomer( null )
     },
     searchC () {
       try {

@@ -62,7 +62,6 @@
 import resBlock from './resBlock.vue'
 import emptyBlock from './emptyBlock.vue'
 import { resViewStore } from '/src/stores/resView.js'
-import { nextTick } from 'vue'
 import c1 from './C1.vue'
 import dayjs from 'dayjs'
 import _ from 'lodash'
@@ -173,21 +172,17 @@ export default {
  
     console.log('resViewTable mounted()')
 
-    //  super hackey here . . .
+    //  TODO super hackey ( but necessary! ) here . . .
     const myTimeout = setTimeout(this.setInitialScroll, 1)
 
     //  set scroll events
     //  see https://github.com/element-plus/element-plus/discussions/9679
-    this.$refs.resViewTable.$refs.scrollBarRef.wrap$.onscroll = (event) => {
-      console.log('left: ', event.target.scrollLeft)
+    console.log('mounted')
+    console.log(this.$refs.resViewTable.$refs.scrollBarRef)
+    this.$refs.resViewTable.$refs.scrollBarRef.wrapRef.onscroll = (event) => {
       resViewStore().scrollLeft = event.target.scrollLeft
-      console.log('top: ', event.target.scrollTop)
       resViewStore().scrollTop = event.target.scrollTop
-
-
     }
-
-
 
   },
   watch: {
