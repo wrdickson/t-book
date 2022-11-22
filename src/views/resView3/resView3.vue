@@ -1,9 +1,23 @@
 <template>
+    <el-drawer
+      v-model="showCreateReservationDrawer"
+      direction="ltr"
+      :size="rDrawerWidth"
+      :withHeader="false"
+    >
+      <el-row justify="end">
+          <font-awesome-icon @click="showCreateReservationDrawer = false" color="#F56C6C" icon="fa-window-close" style="font-size: 1.6em;"/>
+      </el-row>
+      <CreateReservation/>
+    </el-drawer>
     <el-row>
       <el-col :span="mainColSpan">
-        <singleDatePicker
-          @singleDatePicker:dateSelected="singleDateSelected"
-        />
+        <span>
+          <singleDatePicker
+            @singleDatePicker:dateSelected="singleDateSelected"
+          />
+          <el-button type="primary" @click="toggleCreateReservationDrawer">Toggle Drawer</el-button>
+        </span>
         <ResViewTable
           v-if = "rootSpaces"
           @resBlockClick="reservationSelected"
@@ -15,13 +29,13 @@
           :resSpaceCopy="spaceRecords"
         />
       </el-col>
-
     </el-row>
 </template>
 
 <script>
 import singleDatePicker from '/src/views/resView3/singleDatePicker.vue'
 import ResViewTable from '/src/views/resView3/resViewTable.vue'
+import CreateReservation from '/src/views/CreateReservation.vue'
 import api from '/src/api/api.js'
 import dayjs from 'dayjs'
 import isSameOrBefore from 'dayjs'
@@ -34,7 +48,8 @@ export default {
   name: 'resView3',
   components: {
     singleDatePicker,
-    ResViewTable
+    ResViewTable,
+    CreateReservation
   },
   data () {
     return {
@@ -43,14 +58,26 @@ export default {
       reservations: [],
       rootSpaces: null,
       selectedReservation: null,
-      sidebarColSpan: 0,
+      showCreateReservationDrawer: false,
       trigger: 1,
+      windowWidth: 0
       
     }
   },
   computed: {
     token() {
       return accountStore().token
+    },
+    rDrawerWidth () {
+      if(this.windowWidth < 768){
+        return '100%'
+      }
+      if(this.windowWidth > 768 && this.windowWidth < 1200 ) {
+        return '50%'
+      }
+      if(this.windowWidth >= 1200 ) {
+        return '35%'
+      }
     },
     resViewEndDate () {
       return dayjs(this.resViewStartDate).add(31, 'days').format('YYYY-MM-DD')
@@ -322,6 +349,9 @@ export default {
       //  now update the store so that show/hide children remains current
       //  TODO
       resViewStore().setShowHideRootSpaceCopy(this.rootSpaces)
+    },
+    toggleCreateReservationDrawer () {
+      this.showCreateReservationDrawer = !this.showDrawer
     }
   },
   created () {
@@ -330,32 +360,42 @@ export default {
     this.spaceRecords =  {}
   },
   mounted () {
-      //  do we have a showHideRootSpaceCopy in store?
-      //  this holds user's show/hide preferences
-      console.log('resView3 mounted()')
-      console.log( resViewStore().showHideRootSpaceCopy )
+
+    /**
+     *  Get window width and handle changes
+     */
+    this.windowWidth = window.innerWidth
+    window.addEventListener('resize', (event) => {
+      this.windowWidth = window.innerWidth
+    }, true);
 
 
-      //  get space records
-      if( resViewStore().showHideRootSpaceCopy ) {
-        console.log('we have a sHRSC')
-        this.rootSpaces = resViewStore().showHideRootSpaceCopy
-      } else { 
-        console.log('NO sHRSC') 
-        api.rootSpaces.getRootSpaces( this.token ).then( response => {
-          this.rootSpaces = response.data.root_spaces_children_parents
-        })
-      }
+    //  do we have a showHideRootSpaceCopy in store?
+    //  this holds user's show/hide preferences
+    console.log('resView3 mounted()')
+    console.log( resViewStore().showHideRootSpaceCopy )
 
-      //  TODO??
-      //  send it to the store
-      //reservationStore().resViewStart = dayjs().format('YYYY-MM-DD')
 
-      api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.token)
-        .then( (response) => {
-          console.log('res by range', response.data.reservations)
-          this.reservations = response.data.reservations
-        })
+    //  get space records
+    if( resViewStore().showHideRootSpaceCopy ) {
+      console.log('we have a sHRSC')
+      this.rootSpaces = resViewStore().showHideRootSpaceCopy
+    } else { 
+      console.log('NO sHRSC') 
+      api.rootSpaces.getRootSpaces( this.token ).then( response => {
+        this.rootSpaces = response.data.root_spaces_children_parents
+      })
+    }
+
+    //  TODO??
+    //  send it to the store
+    //reservationStore().resViewStart = dayjs().format('YYYY-MM-DD')
+
+    api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.token)
+      .then( (response) => {
+        console.log('res by range', response.data.reservations)
+        this.reservations = response.data.reservations
+      })
   }
 }
 </script>

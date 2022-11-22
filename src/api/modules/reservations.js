@@ -42,8 +42,24 @@ const reservations = {
   *@param beds int
   */
 
-  createReservation ( checkin, checkout, customer, spaceId, people, beds) {
-
+  createReservation ( token, checkin, checkout, customer, spaceId, people, beds) {
+    const promise = axios({
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Jwt: token
+      },
+      data: {
+        checkin: checkin,
+        checkout: checkout,
+        customer: customer,
+        space_id: spaceId,
+        people: people,
+        beds: beds
+      },
+      method: 'post',
+      url: '/api-book/reservations/'
+    })
+    return promise
   },
 
   getReservationsByRange ( startDate, endDate, token ) {

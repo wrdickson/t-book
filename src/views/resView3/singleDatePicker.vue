@@ -1,17 +1,12 @@
 <template>
-  <div>
-    <div class="block">
-      <el-config-provider :locale="locale">
-        <el-date-picker
-          v-model="selectedDate"
-          type="date"
-          :placeholder="datepickerPlaceholder"
-          :size="size"
-        />
-      </el-config-provider>
-    </div>
-  </div>
-
+  <el-config-provider :locale="locale">
+    <el-date-picker
+      v-model="selectedDate"
+      type="date"
+      :placeholder="datepickerPlaceholder"
+      :size="size"
+    />
+  </el-config-provider>
 </template>
 
 <script>

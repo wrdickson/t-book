@@ -85,8 +85,6 @@ export default {
     }
   },
   methods: {
-
-
     setInitialScroll () {
       //  check to see if we have scroll postion in store
       if( resViewStore().scrollTop > 0 ) {
@@ -102,9 +100,6 @@ export default {
     setScrollTop ( topS ) {
       this.$refs.resViewTable.$refs.scrollBarRef.setScrollTop(topS)
     },
-
-
-
     c1ToggleShowChildren ( spaceId ) {
       console.log('resViewTable toggle', spaceId)
       //  tell resView to toggle this

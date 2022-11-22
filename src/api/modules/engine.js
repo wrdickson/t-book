@@ -116,18 +116,7 @@ const engine = {
     return promise
   },
   createReservation: ( newResObj, jwt ) => {
-    const promise = axios({
-      headers: {
-        jwt: jwt
-      },
-      data: {
-        newResObj: newResObj,
-      },
-      dataType: 'json',
-      method: 'post',
-      url: '/api-ezbook/reservations/'
-    })
-    return promise
+
   },
   createSpace: (spaceData, jwt) => {
     const promise = axios({

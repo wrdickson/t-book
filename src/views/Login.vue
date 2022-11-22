@@ -89,6 +89,8 @@ export default {
             center: true
          })
         }
+      }).catch( error => {
+        console.log(error)
       })
     }
   }

@@ -114,9 +114,6 @@ export default {
   .flex-grow {
     flex-grow: 1;
   }
-  .el-drawer__header{
-    display: none !important;
-  }
   .navbarBrand {
     font-size: 20px;
   }

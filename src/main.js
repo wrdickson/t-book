@@ -23,7 +23,8 @@ import {
   faCircleArrowRight,
   faChevronRight,
   faChevronDown,
-  faCircleArrowDown
+  faCircleArrowDown,
+  faWindowClose
 } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
@@ -32,7 +33,8 @@ library.add(
   faChevronRight,
   faChevronDown,
   faCircleArrowRight,
-  faCircleArrowDown
+  faCircleArrowDown,
+  faWindowClose
 )
 
 const pinia = createPinia()

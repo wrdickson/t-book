@@ -4,7 +4,7 @@
     <el-menu-item
       v-if="account.permission > 0" 
       index="/resView3">
-        resView3
+        {{ $t('message.reservationView') }}
     </el-menu-item>
     <el-menu-item
       v-if="account.permission > 1"

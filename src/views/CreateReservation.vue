@@ -1,20 +1,22 @@
 <template>
   <el-row>
-    <el-col :xs="24" :sm="12">
+    <el-col>
       <h1>{{ $t('message.createReservation') }}</h1>
       <hr/>
       <div>
         <span >
-          <span v-if="selectedCustomer">{{ selectedCustomer.firstName }}&nbsp{{selectedCustomer.lastName}}&nbsp&nbsp&nbsp&nbsp</span>
+          <span v-if="selectedCustomer">{{ $t('message.customer') }}:&nbsp<b>{{ selectedCustomer.firstName }}&nbsp{{selectedCustomer.lastName}}</b></span>
+        
+          <el-button 
+            v-if="selectedCustomer"
+            type="warning"
+            size="small"
+            style="float: right;"
+            @click="selectedCustomer = null; showSearchCustomers = null; showCreateCustomer = null"
+            >
+              {{ $t('message.reset') }}
+          </el-button>
         </span>
-        <el-button 
-          v-if="selectedCustomer"
-          type="warning"
-          size="small"
-          @click="selectedCustomer = null; showSearchCustomers = null; showCreateCustomer = null"
-          >
-            {{ $t('message.reset') }}
-        </el-button>
       </div>
       <div>
         <span v-if="!selectedCustomer">
@@ -32,7 +34,6 @@
           </el-button> 
         </span>
       </div>
-      <hr/>
       <SearchCustomers
         v-if="showSearchCustomers && !selectedCustomer"
         @searchCustomers:customerSelected="customerSelected">
@@ -41,6 +42,7 @@
         v-if="showCreateCustomer && !selectedCustomer"
       >
       </CreateCustomer>
+      <hr/>
       <ResPeoplePicker  @resPeoplePicker:peopleQtyChosen="peopleQtyChosen"></ResPeoplePicker>
       <ResBedsPicker  @resBedsPicker:bedQtyChosen="bedQtyChosen"></ResBedsPicker>
       <DateRangePicker
@@ -56,8 +58,8 @@
       <el-form-item
         v-if="startDate && endDate && selectedCustomer && selectedSpaceId && selectedPeople && selectedBeds"
       >
-        <el-button type="primary" @click="createReservation">{{ $t('message.createReservation') }}</el-button>
-        <el-button type="primary" @click="checkConflicts">{{ $t('message.availability') }}</el-button>
+        <el-button type="primary" size="small" @click="createReservation">{{ $t('message.createReservation') }}</el-button>
+        <el-button type="primary" size = "small" @click="checkConflicts">{{ $t('message.availability') }}</el-button>
       </el-form-item>
     </el-col>
   </el-row>
@@ -70,8 +72,8 @@
   import CreateCustomer from '/src/components/createCustomer.vue'
   import ResBedsPicker from '/src/components/resBedsPicker.vue'
   import ResPeoplePicker from '/src/components/resPeoplePicker.vue'
+  import handleError from '/src/composables/handleRequestError.js'
   import { accountStore } from '/src/stores/account.js'
-  import { localeStore } from './../stores/locale.js'
   import api from '/src/api/api.js'
   import dayjs from 'dayjs'
 
@@ -128,9 +130,9 @@
       checkConflicts () {
         api.reservations.checkConflicts( this.fStartDate, this.fEndDate, this.selectedSpaceId, this.token ).then( response => {
           //console.log('checkConflicts():', response.data )
-          console.log('uhr', useHandleRequestError)
+          console.log(response)
         }).catch ( error  => {
-          useHandleRequestError(error)
+          handleError(error)
         })
       },
       createReservation () {
@@ -140,6 +142,15 @@
         console.log('beds: ', this.selectedBeds )
         console.log('spaceId', this.selectedSpaceId )
         console.log('customer: ', this.selectedCustomer )
+        api.reservations.createReservation( this.token, 
+                                            this.fStartDate, 
+                                            this.fEndDate, 
+                                            this.selectedCustomer, 
+                                            this.selectedSpaceId, 
+                                            this.selectedPeople, 
+                                            this.selectedBeds ).then( response => {
+          console.log(response)
+        })
 
       },
       customerSelected ( e ) {

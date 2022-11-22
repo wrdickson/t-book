@@ -1,7 +1,9 @@
 
-export function useHandleRequestError () {
+export default () => {
+
   const handleError = (error) => {
     console.log('from comp', error)
   }
-  return handleError
+  
+  return { handleError }
 }

@@ -16,11 +16,10 @@
       </el-col>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="searchC">Search</el-button>
-      <el-button type="primary" @click="clearInputs">Clear inputs</el-button>
+      <el-button type="primary" @click="searchC">{{ $t('message.searchCustomers') }}</el-button>
+      <el-button type="primary" @click="clearInputs">{{ $t('message.resetInputs') }}</el-button>
     </el-form-item>
   </el-form>
-  <el-divider/>
   <el-table
     :data="customers"
     :default-sort="{ prop: 'lastName', order: 'descending' }"
@@ -33,14 +32,14 @@
       sortable
       prop="lastName"
       :label="labelLastName"
-      width="120"
+      width="100"
     ></el-table-column>
     <el-table-column
       fixed
       sortable
       prop="firstName"
       :label="labelFirstName"
-      width="120"
+      width="100"
     >
     </el-table-column>
     <el-table-column
