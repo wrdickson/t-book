@@ -22,6 +22,7 @@
 <script>
 export default {
   name: 'ResBedsPicker',
+  props: [ 'componentKey', 'initialBedsQty' ],
   emits: [ 'resBedsPicker:bedQtyChosen' ],
   data () {
     return {
@@ -40,7 +41,15 @@ export default {
       return this.$t('message.select')
     }
   },
+  mounted () {
+    if( this.initialBedsQty ) {
+      this.selectedBedQty = this.initialBedsQty
+    }
+  },
   watch: {
+    componentKey ( newVal ) {
+      this.selectedBedQty = null
+    },
     selectedBedQty ( oldVal, newVal ) {
       this.$emit( 'resBedsPicker:bedQtyChosen', this.selectedBedQty )
     }

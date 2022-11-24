@@ -23,10 +23,14 @@
 </template>
 <script>
   import { localeStore } from './../stores/locale.js'
+  import { accountStore } from './../stores/account.js'
+  import api from './../api/api.js'
   import Schema from 'async-validator';
   Schema.warning = function(){};
   export default {
     name: 'CreateCustomer',
+    props: [ 'componentKey' ],
+    emits: [ 'createCustomer:customerCreated' ],
     data() {
       return {
         customerForm: {
@@ -36,19 +40,27 @@
           phone: ''
         },
         rules: {
+          /*
+          alph : [
+            { required: true, message: 'pwd required' },
+            { min: 8, max: 24, message: '8 to 24 characters'},
+            { pattern: /^[A-Za-z0-9_*-]+$/,
+              message: 'alphanumeric, underscore, dash & star only' }
+          ],
+          */
           firstName: [
             { required: true, message: () => this.$t('message.firstNameIsRequired' ) },
-            { min: 3, max: 5, message: 'Length should be 3 to 5' }
+            { min: 1, max: 24, message: '1 to 24' }
           ],
           lastName: [
             { required: true, message: () => this.$t('message.lastNameIsRequired') },
-            { min: 1, max: 12, message: '1 to 12' }
+            { min: 2, max: 24, message: '2 to 24' }
           ],
           email: [
             { type:'email', message: () => this.$t('message.enterCorrectEmail') }
           ],
           phone: [
-            { pattern: /^\+?[1-9][0-9]{7,14}$/,
+            { pattern: /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/,
               message: 'enter a correct phone' }
           ]
         }
@@ -69,13 +81,25 @@
       },
       locale () {
         return localeStore().selectedLocale
+      },
+      token () {
+        return accountStore().token
       }
     },
     methods: {
       submitForm(createCustomerForm) {
         this.$refs[createCustomerForm].validate((valid) => {
           if (valid) {
-            alert('submit!');
+            api.customers.createCustomer( this.token,
+                                          this.customerForm.lastName,
+                                          this.customerForm.firstName,
+                                          this.customerForm.email,
+                                          this.customerForm.phone ).then ( response => {
+              console.log(response)
+              if(response.data.createCustomer && response.data.newCustomer) {
+                this.$emit('createCustomer:customerCreated', response.data.newCustomer)
+              }
+            })
           } else {
             console.log('error submit!!');
             return false;
@@ -84,6 +108,14 @@
       },
       resetForm(createCustomerForm) {
         this.$refs[createCustomerForm].resetFields();
+      }
+    },
+    watch: {
+      componentKey ( newVal ) {
+        this.customerForm.firstName = ''
+        this.customerForm.lastName = ''
+        this.customerForm.email = ''
+        this.customerForm.phone = ''
       }
     }
   }

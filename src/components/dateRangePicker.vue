@@ -27,6 +27,7 @@ import { ElMessage } from 'element-plus'
 import dayjs from 'dayjs'
 export default {
   name: 'DateRangePicker',
+  props: [ 'componentKey', 'initialStart', 'initialEnd' ],
   emits: [ 
     'dateRangePicker:rangeSelected',
     'dateRangePicker:clearDates'
@@ -38,7 +39,9 @@ export default {
   },
   computed: {
     endDate () {
-      return dayjs(this.dRange[1]).format('YYYY-MM-DD')
+      if(this.dRange) {
+        return dayjs(this.dRange[1]).format('YYYY-MM-DD')
+      } else { return null }
     },
     endPlaceholder () {
       return this.$t('message.endDate')
@@ -53,28 +56,44 @@ export default {
       return this.$t('message.to')
     },
     startDate () {
-      return dayjs(this.dRange[0]).format('YYYY-MM-DD')
+      if( this.dRange ) {
+        return dayjs(this.dRange[0]).format('YYYY-MM-DD')
+      } else { return null }
     },
     startPlaceholder () {
       return this.$t('message.startDate')
     }
   },
+  mounted () {
+    if( this.initialStart && this.initialEnd ) {
+      this.dRange = [
+        this.initialStart,
+        this.initialEnd
+      ]
+    }
+  },
   watch: {
+    componentKey ( newVal ) {
+      this.dRange = null
+      this.$emit('dateRangePicker:rangeSelected', [null, null])
+    },
     dRange ( oldR, newR ) {
-      if(this.startDate == this.endDate) {
-        ElMessage( {
-          type: 'warning',
-          message: 'Start and end must be different'
-        })
-        this.$emit('dateRangePicker:clearDates')
-      } else {
-        const rVal = [
-          dayjs(this.dRange[0]).format('YYYY-MM-DD'),
-          dayjs(this.dRange[1]).format('YYYY-MM-DD')
-        ]
-        this.$emit('dateRangePicker:rangeSelected', rVal)
+      //  handle the case where user chooses the same dates for start and ent
+      if( this.startDate != null && this.endDate != null ) {
+        if(this.startDate == this.endDate ) {
+          ElMessage( {
+            type: 'warning',
+            message: 'Start and end must be different'
+          })
+          this.$emit('dateRangePicker:clearDates')
+        } else {
+          const rVal = [
+            dayjs(this.dRange[0]).format('YYYY-MM-DD'),
+            dayjs(this.dRange[1]).format('YYYY-MM-DD')
+          ]
+          this.$emit('dateRangePicker:rangeSelected', rVal)
+        }
       }
-        
     }
   }
   

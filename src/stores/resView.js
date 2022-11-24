@@ -12,6 +12,7 @@ export const resViewStore = defineStore({
   }),
   actions: {
     setShowHideRootSpaceCopy ( rsCopy ) {
+      console.log('storing rscopy')
       this.showHideRootSpaceCopy = rsCopy
     },
     setStartDate ( startDate ) {

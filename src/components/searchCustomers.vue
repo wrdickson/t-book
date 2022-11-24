@@ -17,7 +17,6 @@
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="searchC">{{ $t('message.searchCustomers') }}</el-button>
-      <el-button type="primary" @click="clearInputs">{{ $t('message.resetInputs') }}</el-button>
     </el-form-item>
   </el-form>
   <el-table
@@ -107,6 +106,7 @@ import { accountStore } from '/src/stores/account.js'
 import { ElNotification } from 'element-plus'
 export default {
   name: 'SearchCustomers',
+  props: [ 'componentKey' ],
   emits: [ 'searchCustomers:customerSelected' ],
   data () {
     return {
@@ -138,14 +138,6 @@ export default {
     }
   },
   methods: {
-    clearInputs () {
-      this.form.firstName = ''
-      this.form.lastName = ''
-      this.rowCount = 0
-      this.customers = []
-      //  reset selectdCustomer
-      this.selectCustomer( null )
-    },
     searchC () {
       try {
         api.customers.searchCustomers(this.form.lastName, this.form.firstName, this.token, this.offset, this.pageSize).then( (response) => {
@@ -172,6 +164,13 @@ export default {
     }
   },
   watch: {
+    componentKey ( newVal ) {
+      this.form.firstName = ''
+      this.form.lastName = ''
+      this.rowCount = 0
+      this.customers = []
+      //  reset selectdCustomer
+    },
     currentPage ( newval ) {
       this.currentPage = newval
     },

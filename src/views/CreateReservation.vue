@@ -2,6 +2,16 @@
   <el-row>
     <el-col>
       <h1>{{ $t('message.createReservation') }}</h1>
+      <el-button type="primary" size="small" @click="resetForm">Reset Form</el-button>
+      <!--
+      <div>CreateReservation State</div>
+      <div>selectedPeople: {{ selectedPeople }}</div>
+      <div>selectedBeds: {{ selectedBeds }}</div>
+      <div>startDate: {{ startDate }}</div>
+      <div>endDate: {{ endDate }}</div>
+      <div>spaceId: {{ selectedSpaceId }}</div>
+      <div>selectedCustomer: {{ selectedCustomer }}</div>
+      -->
       <hr/>
       <div>
         <span >
@@ -36,20 +46,30 @@
       </div>
       <SearchCustomers
         v-if="showSearchCustomers && !selectedCustomer"
+        :componentKey="componentKey"
         @searchCustomers:customerSelected="customerSelected">
       </SearchCustomers>
       <CreateCustomer
+        :componentKey="componentKey"
+        @createCustomer:customerCreated="customerSelected"
         v-if="showCreateCustomer && !selectedCustomer"
       >
       </CreateCustomer>
       <hr/>
-      <ResPeoplePicker  @resPeoplePicker:peopleQtyChosen="peopleQtyChosen"></ResPeoplePicker>
-      <ResBedsPicker  @resBedsPicker:bedQtyChosen="bedQtyChosen"></ResBedsPicker>
+      <ResPeoplePicker
+        :componentKey="componentKey"
+        @resPeoplePicker:peopleQtyChosen="peopleQtyChosen"
+        ></ResPeoplePicker>
+      <ResBedsPicker 
+        :componentKey="componentKey" 
+        @resBedsPicker:bedQtyChosen="bedQtyChosen"></ResBedsPicker>
       <DateRangePicker
+        :componentKey="componentKey"
         @dateRangePicker:rangeSelected="dRangeSelected"
         @dateRangePicker:clearDates="dRangeClearDates">
       </DateRangePicker>
       <RootSpacePicker 
+        :componentKey="componentKey"
         v-if="availableSpaceIds"
         :availableSpaceIds="availableSpaceIds"
         @rootSpacePicker:spaceSelected="spaceSelected">
@@ -72,13 +92,23 @@
   import CreateCustomer from '/src/components/createCustomer.vue'
   import ResBedsPicker from '/src/components/resBedsPicker.vue'
   import ResPeoplePicker from '/src/components/resPeoplePicker.vue'
-  import handleError from '/src/composables/handleRequestError.js'
+  import { ElMessage } from 'element-plus'
+  import useHandleRequestError from '/src/composables/useHandleRequestError.js'
   import { accountStore } from '/src/stores/account.js'
   import api from '/src/api/api.js'
   import dayjs from 'dayjs'
 
   export default {
+    setup () {
+      //  import composable function for request error handling
+      const { handleRequestError } = useHandleRequestError()
+      return { handleRequestError }
+    },
     name: 'CreateReservation',
+    emits: [
+      'createReservation:reloadReservations',
+      'createReservation:closeDrawer'
+    ],
     components: {
       DateRangePicker,
       RootSpacePicker,
@@ -97,7 +127,9 @@
         endDate: null,
         selectedSpaceId: null,
         selectedPeople: null,
-        selectedBeds: null
+        selectedBeds: null,
+
+        componentKey: 0
       }
     },
     computed: {
@@ -136,12 +168,14 @@
         })
       },
       createReservation () {
+        /*
         console.log('checkin: ', this.fStartDate)
         console.log('checkout: ', this.fEndDate )
         console.log('people: ', this.selectedPeople)
         console.log('beds: ', this.selectedBeds )
         console.log('spaceId', this.selectedSpaceId )
         console.log('customer: ', this.selectedCustomer )
+        */
         api.reservations.createReservation( this.token, 
                                             this.fStartDate, 
                                             this.fEndDate, 
@@ -149,7 +183,23 @@
                                             this.selectedSpaceId, 
                                             this.selectedPeople, 
                                             this.selectedBeds ).then( response => {
-          console.log(response)
+          console.log(response.data)
+          if(response.data.create.execute == true){
+            ElMessage({
+              type: 'success',
+              message: 'Reservation was created'
+            })
+            //  reload reservations
+            this.$emit('createReservation:reloadReservations')
+            //  reset form
+            this.resetForm()
+            //  tell parent to close drawer
+            this.$emit('createReservation:closeDrawer')
+
+          }
+        }).catch( error => {
+          console.log('error', error)
+          this.handleRequestError(error)
         })
 
       },
@@ -163,16 +213,34 @@
         this.availableSpaceIds = null
       },
       dRangeSelected ( range ) {
-        this.startDate = range[0]
-        this.endDate = range[1]
-        api.reservations.checkAvailabilityByDates(this.fStartDate, this.fEndDate, this.token).then( (response) => {
-          console.log(response.data)
-          this.availableSpaceIds = response.data.availability.availableSpaceIds
-        })
+        console.log('dRange @ change on createres', range)
+        // DO NOT load if range is null . . . this results in all
+        // ids as available . . . BAD BAD BAD
+        if( range[0] && range[1] ) {
+          this.startDate = range[0]
+          this.endDate = range[1]
+          api.reservations.checkAvailabilityByDates(this.fStartDate, this.fEndDate, this.token).then( (response) => {
+            console.log(response.data)
+            this.availableSpaceIds = response.data.availability.availableSpaceIds
+          })
+        } else {
+          this.availableSpaceIds = []
+          this.startDate = null
+          this.endDate = null
+        }
       },
       peopleQtyChosen ( people ) {
         console.log('people chosen: ', people )
         this.selectedPeople = people
+      },
+      resetForm () {
+        this.componentKey += 1
+        // also, we clear availableSpaceIds
+        this.availableSpaceIds = []
+        //  clear customer
+        this.selectedCustomer = null
+        this.showCreateCustomer = false
+        this.showSearchCustomers = false
       },
       spaceSelected ( spaceId ) {
         console.log(spaceId)

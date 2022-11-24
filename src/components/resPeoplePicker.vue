@@ -21,6 +21,7 @@
 import { localeStore } from './../stores/locale.js'
 export default {
   name: 'ResPeoplePicker',
+  props: [ 'componentKey', 'initialPeopleQty' ],
   emits: [ 'resPeoplePicker:peopleQtyChosen' ],
   data () {
     return {
@@ -39,7 +40,16 @@ export default {
       return this.$t('message.select')
     }
   },
+  mounted () {
+    if( this.initialPeopleQty ) {
+      this.selectedPeopleQty = this.initialPeopleQty
+    }
+  },
   watch: {
+    componentKey ( oldVal, newVal ) {
+      console.log('componentKey change on resPoeplePic', newVal)
+      this.selectedPeopleQty = null
+    },
     selectedPeopleQty ( oldVal, newVal ) {
       console.log(this.$i18n)
       this.$emit( 'resPeoplePicker:peopleQtyChosen', this.selectedPeopleQty )

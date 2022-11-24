@@ -8,15 +8,27 @@
       <el-row justify="end">
           <font-awesome-icon @click="showCreateReservationDrawer = false" color="#F56C6C" icon="fa-window-close" style="font-size: 1.6em;"/>
       </el-row>
-      <CreateReservation/>
+      <CreateReservation
+        @createReservation:reloadReservations="getReservations"
+        @createReservation:closeDrawer="showCreateReservationDrawer = false"
+      />
     </el-drawer>
     <el-row>
       <el-col :span="mainColSpan">
         <span>
+          <el-button-group>
+            <el-button type="info" @click="viewBack7">-7</el-button>
+            <el-button type="info" @click="viewBack1">-1</el-button>
+          </el-button-group>
           <singleDatePicker
+            :overrideDate="overRideSingleDatePicker"
             @singleDatePicker:dateSelected="singleDateSelected"
           />
-          <el-button type="primary" @click="toggleCreateReservationDrawer">Toggle Drawer</el-button>
+          <el-button-group>
+            <el-button type="info" @click="viewForward1">+1</el-button>
+            <el-button type="info" @click="viewForward7">+7</el-button>
+          <el-button type="success" @click="showCreateReservationDrawer = true">{{ $t('message.createReservation') }}</el-button>
+        </el-button-group>
         </span>
         <ResViewTable
           v-if = "rootSpaces"
@@ -40,6 +52,7 @@ import api from '/src/api/api.js'
 import dayjs from 'dayjs'
 import isSameOrBefore from 'dayjs'
 import isSameOrAfter from 'dayjs'
+import { ElLoading } from 'element-plus'
 import _ from 'lodash'
 import { accountStore } from '/src/stores/account.js'
 import { resViewStore } from '/src/stores/resView.js'
@@ -54,6 +67,7 @@ export default {
   data () {
     return {
       mainColSpan: 24,
+      overRideSingleDatePicker: '',
       reservationDialog: false,
       reservations: [],
       rootSpaces: null,
@@ -96,6 +110,20 @@ export default {
       let sKey
 
       let spaceRecords
+
+      //  we have to clear out all the properties on the root spaces
+      //  that represent a resblock for presentation
+      //  these property keys all start with "D"
+      //  for example 'D20220827isfirst'
+      _.each(this.rootSpaces, ( rootSpace ) => {
+        //console.log('it RootSpace', rootSpace)
+        const keys =  Object.keys(rootSpace)
+          _.each(keys, (key) => {
+            if ( key.substring(0,1) == "D" ) {
+              delete rootSpace[key]
+            }
+          })
+      })
 
       spaceRecords = this.rootSpaces
       //  iterate through the reservations and add data to the appropriate array item
@@ -244,6 +272,7 @@ export default {
           }
         }
       })
+      
       return spaceRecords
     },
     tDateArray () {
@@ -269,6 +298,13 @@ export default {
     emptyCellClick ( obj ) {
       console.log('empty cell selected', obj)
     },
+    getReservations () {
+      api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.token)
+      .then( (response) => {
+        console.log('res by range', response.data.reservations)
+        this.reservations = response.data.reservations
+      })
+    },
     reservationSelected ( resId ) {
       console.log('res selected', resId )
       this.selectedReservation = _.find(this.reservations, function(o){
@@ -279,7 +315,6 @@ export default {
     rowClassName ( obj) {
     },
     singleDateSelected ( nDate ) {
-      this.loading = true
       //  format it
       let fDateSelected = dayjs(nDate).format('YYYY-MM-DD')
       //  send it to the store
@@ -289,7 +324,6 @@ export default {
       //  this will update the view
       api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.token)
         .then( (response) => {
-          console.log('res by range', response.data.reservations)
           this.reservations = response.data.reservations
         })
     },
@@ -327,8 +361,6 @@ export default {
         }
       }
       let toggleChildren = (k) => {
-        console.log(k.showChildren)
-        console.log(k.children)
         if(k.showChildren == true){
           k.showChildren = false
           if(k.children) {
@@ -351,7 +383,23 @@ export default {
       resViewStore().setShowHideRootSpaceCopy(this.rootSpaces)
     },
     toggleCreateReservationDrawer () {
-      this.showCreateReservationDrawer = !this.showDrawer
+      this.showCreateReservationDrawer = !this.showCreateReservationDrawer
+    },
+    viewBack1 () {
+      const newDate = dayjs(resViewStore().startDate).subtract( 1, 'days').format('YYYY-MM-DD')
+      this.overRideSingleDatePicker = newDate
+    },
+    viewBack7 () {
+      const newDate = dayjs(resViewStore().startDate).subtract( 7, 'days').format('YYYY-MM-DD')
+      this.overRideSingleDatePicker = newDate
+    },
+    viewForward1 () {
+      const newDate = dayjs(resViewStore().startDate).add( 1, 'days').format('YYYY-MM-DD')
+      this.overRideSingleDatePicker = newDate
+    },
+    viewForward7 () {
+      const newDate = dayjs(resViewStore().startDate).add( 7, 'days').format('YYYY-MM-DD')
+      this.overRideSingleDatePicker = newDate
     }
   },
   created () {
@@ -378,10 +426,8 @@ export default {
 
     //  get space records
     if( resViewStore().showHideRootSpaceCopy ) {
-      console.log('we have a sHRSC')
       this.rootSpaces = resViewStore().showHideRootSpaceCopy
     } else { 
-      console.log('NO sHRSC') 
       api.rootSpaces.getRootSpaces( this.token ).then( response => {
         this.rootSpaces = response.data.root_spaces_children_parents
       })
@@ -391,11 +437,14 @@ export default {
     //  send it to the store
     //reservationStore().resViewStart = dayjs().format('YYYY-MM-DD')
 
+    this.getReservations()
+    /*
     api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.token)
       .then( (response) => {
         console.log('res by range', response.data.reservations)
         this.reservations = response.data.reservations
       })
+    */
   }
 }
 </script>

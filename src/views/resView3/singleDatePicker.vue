@@ -15,6 +15,7 @@ import { localeStore } from '/src/stores/locale.js'
 import { resViewStore } from '/src/stores/resView.js'
 export default {
   name: 'singelDatePicker',
+  props: ['overrideDate'],
   emits: ['singleDatePicker:dateSelected'],
   data () {
     return {
@@ -29,17 +30,12 @@ export default {
     },
     locale () {
       return localeStore().selectedLocale
-    },
-    resViewStoreStart () {
-
     }
   },
-  mounted () {
-    
-    //  send a signal to parent that this is date selected
-    //this.$emit('singleDatePicker:dateSelected', this.selectedDate)
-  },
   watch: {
+    overrideDate ( date ) {
+      this.selectedDate = date
+    },
     selectedDate( newDate, oldDate ) {
       this.$emit('singleDatePicker:dateSelected', this.selectedDate)
     }

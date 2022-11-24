@@ -26,7 +26,8 @@ import { accountStore } from '/src/stores/account.js'
 import _ from 'lodash'
 export default {
   name: 'RootSpacePicker',
-  props: [ 'availableSpaceIds'],
+  props: [ 'availableSpaceIds', 'componentKey'],
+  emits: [ 'rootSpacePicker:spaceSelected' ],
   data () {
     return {
       rootSpaces: null,
@@ -69,13 +70,17 @@ export default {
       return accountStore().token
     }
   },
-  emits: [ 'rootSpacePicker:spaceSelected' ],
   created () {
     api.rootSpaces.getRootSpaces( this.token ).then (( response ) => {
       this.rootSpaces = response.data.root_spaces_children_parents
     })
   },
   watch: {
+    // component key changes when parent wants to clear the form
+    componentKey ( newVal ) {
+      console.log('cKey on rSP')
+      this.selectedRootSpace = null
+    },
     selectedRootSpace ( oldVal, newVal ) {
       this.$emit('rootSpacePicker:spaceSelected', this.selectedRootSpace )
     },

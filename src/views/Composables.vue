@@ -17,8 +17,7 @@ export default {
   name: 'Composables',
   mounted () {
     console.log('created')
-    console.log('this.v1: ', this.v1)
-    console.log('this.v2: ', this.v2)
+    console.log('sayh', sayHello )
   }
 
 }
