@@ -7,13 +7,12 @@
         {{ $t('message.reservationView') }}
     </el-menu-item>
     <el-menu-item
-      v-if="account.permission > 1"
-      index="/CreateReservation">
-        CreateReservation
-    </el-menu-item>
-    <el-menu-item
       index="/Composables">
         Composables
+    </el-menu-item>
+    <el-menu-item
+      index="/SpaceEdit">
+        SpaceEdit
     </el-menu-item>
   </el-menu>
 </template>

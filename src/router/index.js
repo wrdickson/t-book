@@ -5,6 +5,7 @@ import Logoff from '/src/views/Logoff.vue'
 import resView3 from '/src/views/resView3/resView3.vue'
 import CreateReservation from '/src/views/CreateReservation.vue'
 import Composables from '/src/views/Composables.vue'
+import SpaceEdit from '/src/views/SpaceEdit/SpaceEdit.vue'
 
 const routes = [
     {
@@ -38,9 +39,9 @@ const routes = [
       component: resView3
     },
     {
-      path: '/CreateReservation',
-      name: 'CreateReservation',
-      component: CreateReservation
+      path: '/SpaceEdit',
+      name: 'SpaceEdit',
+      component: SpaceEdit
     }
   ]
 

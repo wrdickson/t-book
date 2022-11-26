@@ -5,7 +5,6 @@ const reservations = {
     const promise = axios({
       method: 'post',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
         'Jwt': token
       },
       data: {
@@ -21,7 +20,6 @@ const reservations = {
     const promise = axios({
       method: 'post',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
         'Jwt': token
       },
       data: {
@@ -33,19 +31,18 @@ const reservations = {
     })
     return promise
   },
-  /*
-  *@param spaceId int
-  *@param checkin date/string
-  *@param checkout date/string
-  *@param customer int
-  *@param people int
-  *@param beds int
+  /**
+    *@param token string
+    *@param spaceId int
+    *@param checkin date/string
+    *@param checkout date/string
+    *@param customer int
+    *@param people int
+    *@param beds int
   */
-
-  createReservation ( token, checkin, checkout, customer, spaceId, people, beds) {
+  createReservation ( token, checkin, checkout, customer, spaceId, people, beds ) {
     const promise = axios({
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
         Jwt: token
       },
       data: {
@@ -66,7 +63,6 @@ const reservations = {
     const request = axios({
       method: 'post',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
         'Jwt': token
       },
       data: {

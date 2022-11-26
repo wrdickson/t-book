@@ -14,8 +14,8 @@
         <el-input v-model="customerForm.phone"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('createCustomerForm')">Create</el-button>
-        <el-button @click="resetForm('createCustomerForm')">Reset</el-button>
+        <el-button type="primary" @click="submitForm('createCustomerForm')">{{ $t('message.createCustomer') }}</el-button>
+        <el-button @click="resetForm('createCustomerForm')">{{ $t('message.reset') }}</el-button>
       </el-form-item>
 
     </el-form>

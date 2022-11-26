@@ -17,18 +17,18 @@
       <el-col :span="mainColSpan">
         <span>
           <el-button-group>
-            <el-button type="info" @click="viewBack7">-7</el-button>
-            <el-button type="info" @click="viewBack1">-1</el-button>
+            <el-button type="warning" @click="viewBack7">-7</el-button>
+            <el-button type="warning" @click="viewBack1">-1</el-button>
           </el-button-group>
           <singleDatePicker
             :overrideDate="overRideSingleDatePicker"
             @singleDatePicker:dateSelected="singleDateSelected"
           />
           <el-button-group>
-            <el-button type="info" @click="viewForward1">+1</el-button>
-            <el-button type="info" @click="viewForward7">+7</el-button>
+            <el-button type="warning" @click="viewForward1">+1</el-button>
+            <el-button type="warning" @click="viewForward7">+7</el-button>
+          </el-button-group>&nbsp
           <el-button type="success" @click="showCreateReservationDrawer = true">{{ $t('message.createReservation') }}</el-button>
-        </el-button-group>
         </span>
         <ResViewTable
           v-if = "rootSpaces"
@@ -75,7 +75,6 @@ export default {
       showCreateReservationDrawer: false,
       trigger: 1,
       windowWidth: 0
-      
     }
   },
   computed: {
@@ -112,17 +111,16 @@ export default {
       let spaceRecords
 
       //  we have to clear out all the properties on the root spaces
-      //  that represent a resblock for presentation
-      //  these property keys all start with "D"
+      //  that represent a res block for presentation.
+      //  These property keys all start with "D"
       //  for example 'D20220827isfirst'
       _.each(this.rootSpaces, ( rootSpace ) => {
-        //console.log('it RootSpace', rootSpace)
         const keys =  Object.keys(rootSpace)
-          _.each(keys, (key) => {
-            if ( key.substring(0,1) == "D" ) {
-              delete rootSpace[key]
-            }
-          })
+        _.each(keys, (key) => {
+          if ( key.substring(0,1) == "D" ) {
+            delete rootSpace[key]
+          }
+        })
       })
 
       spaceRecords = this.rootSpaces

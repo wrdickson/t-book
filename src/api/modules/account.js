@@ -5,7 +5,6 @@ const account = {
   login: (username, password) => {
     const request = axios({
       method: 'post',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       data: {
         username: username,
         password: password
@@ -18,7 +17,6 @@ const account = {
     const request = axios({
       method: 'post',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
         'Jwt': token
       },
       data: {
@@ -32,7 +30,6 @@ const account = {
     const request = axios({
       method: 'post',
       headers: { 
-        'Content-Type': 'application/x-www-form-urlencoded',
         'Jwt': token
       },
       url: '/api-book/authorize-token/'
