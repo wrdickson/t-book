@@ -1,47 +1,45 @@
 <template>
-    <el-drawer
-      v-model="showCreateReservationDrawer"
-      direction="ltr"
-      :size="rDrawerWidth"
-      :withHeader="false"
-    >
-      <el-row justify="end">
-          <font-awesome-icon @click="showCreateReservationDrawer = false" color="#F56C6C" icon="fa-window-close" style="font-size: 1.6em;"/>
-      </el-row>
-      <CreateReservation
-        @createReservation:reloadReservations="getReservations"
-        @createReservation:closeDrawer="showCreateReservationDrawer = false"
-      />
-    </el-drawer>
-    <el-row>
-      <el-col :span="mainColSpan">
-        <span>
-          <el-button-group>
-            <el-button type="warning" @click="viewBack7">-7</el-button>
-            <el-button type="warning" @click="viewBack1">-1</el-button>
-          </el-button-group>
-          <singleDatePicker
-            :overrideDate="overRideSingleDatePicker"
-            @singleDatePicker:dateSelected="singleDateSelected"
-          />
-          <el-button-group>
-            <el-button type="warning" @click="viewForward1">+1</el-button>
-            <el-button type="warning" @click="viewForward7">+7</el-button>
-          </el-button-group>&nbsp
-          <el-button type="success" @click="showCreateReservationDrawer = true">{{ $t('message.createReservation') }}</el-button>
-        </span>
-        <ResViewTable
-          v-if = "rootSpaces"
-          @resBlockClick="reservationSelected"
-          @resview-toggle-show-children="toggleShowChildren"
-          @emptyCellClick="emptyCellClick"
-          :tDateArray="tDateArray"
-          :tableData="resTableData"
-          :trigger="trigger"
-          :resSpaceCopy="spaceRecords"
+    <splitpanes
+      @resized="leftResize">
+      <pane
+        :size="leftPaneSize">
+        <CreateReservation
+          v-if="showCreateReservation"
+          @createReservation:reloadReservations="getReservations"
+          @createReservation:closeDrawer="showCreateReservationDrawer = false"
         />
-      </el-col>
-    </el-row>
+        
+      </pane>
+      <pane>
+        <div style="margin-left: 4px;">
+          <span>
+            <el-button-group>
+              <el-button type="warning" @click="viewBack7">-7</el-button>
+              <el-button type="warning" @click="viewBack1">-1</el-button>
+            </el-button-group>
+            <singleDatePicker
+              :overrideDate="overRideSingleDatePicker"
+              @singleDatePicker:dateSelected="singleDateSelected"
+            />
+            <el-button-group>
+              <el-button type="warning" @click="viewForward1">+1</el-button>
+              <el-button type="warning" @click="viewForward7">+7</el-button>
+            </el-button-group>&nbsp
+            <el-button type="success" @click="showCreateReservation = true">{{ $t('message.createReservation') }}</el-button>
+          </span>
+          <ResViewTable
+            v-if = "rootSpaces"
+            @resBlockClick="reservationSelected"
+            @resview-toggle-show-children="toggleShowChildren"
+            @emptyCellClick="emptyCellClick"
+            :tDateArray="tDateArray"
+            :tableData="resTableData"
+            :trigger="trigger"
+            :resSpaceCopy="spaceRecords"
+          />
+        </div>
+      </pane>
+     </splitpanes>
 </template>
 
 <script>
@@ -50,34 +48,49 @@ import ResViewTable from '/src/views/resView3/resViewTable.vue'
 import CreateReservation from '/src/views/CreateReservation.vue'
 import api from '/src/api/api.js'
 import dayjs from 'dayjs'
+import 'dayjs/locale/es'
 import isSameOrBefore from 'dayjs'
 import isSameOrAfter from 'dayjs'
-import { ElLoading } from 'element-plus'
 import _ from 'lodash'
 import { accountStore } from '/src/stores/account.js'
+import { localeStore } from '/src/stores/locale.js'
 import { resViewStore } from '/src/stores/resView.js'
+import useHandleRequestError from '/src/composables/useHandleRequestError.js'
+import { Splitpanes, Pane } from 'splitpanes'
+import 'splitpanes/dist/splitpanes.css'
+
 
 export default {
+  setup () {
+      //  import composable function for request error handling
+      const { handleRequestError } = useHandleRequestError()
+      return { handleRequestError }
+  },
   name: 'resView3',
   components: {
     singleDatePicker,
     ResViewTable,
-    CreateReservation
+    CreateReservation,
+    Splitpanes,
+    Pane
   },
   data () {
     return {
-      mainColSpan: 24,
+      leftPaneSize: 25,
       overRideSingleDatePicker: '',
       reservationDialog: false,
       reservations: [],
       rootSpaces: null,
       selectedReservation: null,
-      showCreateReservationDrawer: false,
+      showCreateReservation: false,
       trigger: 1,
       windowWidth: 0
     }
   },
   computed: {
+    locale () {
+      return localeStore().selectedLocale
+    },
     token() {
       return accountStore().token
     },
@@ -86,7 +99,7 @@ export default {
         return '100%'
       }
       if(this.windowWidth > 768 && this.windowWidth < 1200 ) {
-        return '50%'
+        return '500px'
       }
       if(this.windowWidth >= 1200 ) {
         return '35%'
@@ -274,6 +287,8 @@ export default {
       return spaceRecords
     },
     tDateArray () {
+      //  set a reactive locale to day.js for table header formatting
+      dayjs.locale(this.locale.name)
       //  this constructs the column elements for the table
       //  we want 31 columns, starting from start date
       const dArr = []
@@ -282,7 +297,7 @@ export default {
           //  formatted without dashes
           dayString: 'D' +  dayjs(this.resViewStartDate).add(i, 'day').format('YYYYMMDD'),
           //  formatted with dashes
-          dayLabel: dayjs(this.resViewStartDate).add(i, 'day').format('MMM D YYYY')
+          dayLabel: dayjs(this.resViewStartDate).add(i, 'day').format('ddd MMM D')
         }
         dArr.push(iObj)
       }
@@ -297,14 +312,21 @@ export default {
       console.log('empty cell selected', obj)
     },
     getReservations () {
+      console.log('getReservations() on resView3')
       api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.token)
       .then( (response) => {
         console.log('res by range', response.data.reservations)
         this.reservations = response.data.reservations
+      }).catch( error => {
+          console.log('error', error)
+          this.handleRequestError(error)
+          this.reservations = []
       })
     },
+    leftResize ( e ) {
+      console.log(e)
+    },
     reservationSelected ( resId ) {
-      console.log('res selected', resId )
       this.selectedReservation = _.find(this.reservations, function(o){
         return o.id == resId
       })
@@ -320,10 +342,7 @@ export default {
       resViewStore().startDate = fDateSelected
       //  get reservations from db
       //  this will update the view
-      api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.token)
-        .then( (response) => {
-          this.reservations = response.data.reservations
-        })
+      this.getReservations()
     },
     toggleShowChildren( spaceId ) {
       //  note that this IS going to change the store
@@ -406,7 +425,6 @@ export default {
     this.spaceRecords =  {}
   },
   mounted () {
-
     /**
      *  Get window width and handle changes
      */
@@ -417,11 +435,6 @@ export default {
 
 
     //  do we have a showHideRootSpaceCopy in store?
-    //  this holds user's show/hide preferences
-    console.log('resView3 mounted()')
-    console.log( resViewStore().showHideRootSpaceCopy )
-
-
     //  get space records
     if( resViewStore().showHideRootSpaceCopy ) {
       this.rootSpaces = resViewStore().showHideRootSpaceCopy
@@ -430,19 +443,7 @@ export default {
         this.rootSpaces = response.data.root_spaces_children_parents
       })
     }
-
-    //  TODO??
-    //  send it to the store
-    //reservationStore().resViewStart = dayjs().format('YYYY-MM-DD')
-
     this.getReservations()
-    /*
-    api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.token)
-      .then( (response) => {
-        console.log('res by range', response.data.reservations)
-        this.reservations = response.data.reservations
-      })
-    */
   }
 }
 </script>
@@ -451,4 +452,16 @@ export default {
   .row-hidden {
     display: none !important;
   }
+
+
+
+  .splitpanes--vertical > .splitpanes__splitter {
+  min-width: 10px;
+  background:  #3375b9
+}
+
+.splitpanes--horizontal > .splitpanes__splitter {
+  min-height: 10px;
+  background: rgb(10, 66, 18);
+}
 </style>
