@@ -7,16 +7,16 @@
       </div>
     </template>
       <el-form
-        :model="selectedSpace" 
+        :model="selectedSpaceCopy" 
         size="small"
         label-position="right"
         label-width="160px">
 
         <el-form-item :label="i18Title">
-          <el-input v-model="selectedSpace.title"></el-input>
+          <el-input v-model="selectedSpaceCopy.title"></el-input>
         </el-form-item>
         <el-form-item :label="i18ChildOf">
-          <el-select v-model="selectedSpace.childOf" placeholder="Select">
+          <el-select v-model="selectedSpaceCopy.childOf" placeholder="Select">
             <el-option label="0" value="0"></el-option>
             <template v-for="space in rootSpaces">
               <el-option :label="space.title" :value="space.id" ></el-option>
@@ -24,30 +24,30 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="i18Type">
-          <el-select v-model="selectedSpace.spaceType">
+          <el-select v-model="selectedSpaceCopy.spaceType">
             <template v-for="spaceType in spaceTypes">
               <el-option :label="spaceType.title" :value="spaceType.id"></el-option>
             </template>
           </el-select>
         </el-form-item>
         <el-form-item :label="i18DisplayOrder">
-          <el-input v-model="selectedSpace.displayOrder"></el-input>
+          <el-input v-model="selectedSpaceCopy.displayOrder"></el-input>
         </el-form-item>
         <el-form-item :label="i18ShowChildren">
-          <el-select v-model="selectedSpace.showChildren" placeholder="Select">
+          <el-select v-model="selectedSpaceCopy.showChildren" placeholder="Select">
             <el-option :label="i18True" value="1"/>
             <el-option :label="i18False" value="0"/>
           </el-select>
         </el-form-item>
         <el-form-item :label="i18People">
-            <el-select v-model="selectedSpace.people">
+            <el-select v-model="selectedSpaceCopy.people">
               <template v-for="people in peopleArr">
                 <el-option :label="people" :value="people"></el-option>
               </template>
             </el-select>
         </el-form-item>
         <el-form-item :label="i18Beds">
-          <el-select v-model="selectedSpace.beds">
+          <el-select v-model="selectedSpaceCopy.beds">
             <template v-for="beds in bedsArr">
               <el-option :label="beds" :value="beds"></el-option>
             </template>
@@ -83,7 +83,22 @@ export default {
     return {
       bedsArr: [1,2,3,4,5,6,7,8,9,10],
       peopleArr: [0,1,2,3,4,5,6,7,8,9,10],
-      showSpaceEdit: false
+      showSpaceEdit: false,
+      //  don't pass the whole object, or reactivity will be passed too
+      selectedSpaceCopy: {
+        id: this.selectedSpace.id,
+        beds: this.selectedSpace.beds,
+        childOf: this.selectedSpace.childOf,
+        children: this.selectedSpace.children,
+        displayOrder: this.selectedSpace.displayOrder,
+        parents: this.selectedSpace.parents,
+        people: this.selectedSpace.people,
+        showChildren: this.selectedSpace.showChildren,
+        title: this.selectedSpace.title,
+        spaceType: this.selectedSpace.spaceType,
+
+
+      }
     }
   },
   computed: {
@@ -111,7 +126,7 @@ export default {
       this.$emit('emit-close')
     },
     updateSpace () {
-      this.$emit( 'update-space', this.selectedSpace )
+      this.$emit( 'update-space', this.selectedSpaceCopy )
     }
   },
   created () {

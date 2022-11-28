@@ -3,7 +3,7 @@
     ref="resViewTable"
     :data="tableData"
     :row-style="rowStyle"
-    height="450"
+    height="520"
     style="width: 100%"
     @cell-click="cellClick"
     @empty-block-click="emptyBlockClick">
@@ -24,7 +24,7 @@
       </template>
     </el-table-column>
     <template v-for="day in tDateArray">
-      <el-table-column :prop=day.dayString :label=day.dayLabel width="100">
+      <el-table-column :prop=day.dayString :label=day.dayLabel width="90">
       <template #default="scope">
         <div style="display: flex; align-items: center;">
           <resBlock
@@ -164,21 +164,17 @@ export default {
     }
   },
   mounted () {
- 
-    console.log('resViewTable mounted()')
-
     //  TODO super hackey ( but necessary! ) here . . .
+    //  I tried and failed to use nextTick(), but probably fucked it up
     const myTimeout = setTimeout(this.setInitialScroll, 1)
 
     //  set scroll events
     //  see https://github.com/element-plus/element-plus/discussions/9679
-    console.log('mounted')
-    console.log(this.$refs.resViewTable.$refs.scrollBarRef)
+    //  for the mysterious "wrapRef" function
     this.$refs.resViewTable.$refs.scrollBarRef.wrapRef.onscroll = (event) => {
       resViewStore().scrollLeft = event.target.scrollLeft
       resViewStore().scrollTop = event.target.scrollTop
     }
-
   },
   watch: {
     resSpaceCopy (old, newd){

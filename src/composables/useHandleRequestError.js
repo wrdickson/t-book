@@ -30,8 +30,8 @@ export default () => {
             case 401:  //  unauthorized
               ElNotification({
                 title: 'Error 401 - Unauthorized',
-                duration: 0,
-                message: 'Authorization failed.  Request was not processed',
+                duration: 4500,
+                message: 'Authorization failed.  Request was not processed.',
                 type: 'error',
                 onClose: directToLogin
               })

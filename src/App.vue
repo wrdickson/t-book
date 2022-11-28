@@ -13,10 +13,10 @@
       :with-header="false"
       :show-close="false"
       >
-        <MainMenu @mainMenu-select="hideDrawer"/>
+      <MainMenu @mainMenu-select="hideDrawer"/>
     </el-drawer>
     <el-container>
-      <el-aside width="180px" class="hidden-sm-and-down navAside">
+      <el-aside width="180px" class="hidden-lg-and-down navAside">
         <MainMenu/>
       </el-aside>
       <el-container>
@@ -25,7 +25,7 @@
               mode="horizontal"
               :ellipsis="true"
             >
-              <span class="hidden-md-and-up"><el-button type="primary" link @click="drawerVisible = true"><font-awesome-icon icon="fa-solid fa-bars" size="2x" /></el-button></span>
+              <span class="hidden-xl-and-up"><el-button type="primary" link @click="drawerVisible = true"><font-awesome-icon icon="fa-solid fa-bars" size="2x" /></el-button></span>
               <el-menu-item class="navbarBrand" index="1" style="border-bottom: 0px;">Trekbill.com</el-menu-item>
               <div class="flex-grow"/>
               <userMenu :account="account"/>

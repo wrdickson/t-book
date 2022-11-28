@@ -1,7 +1,6 @@
 <template>
  
   <el-row>
-
     <el-col :span="12">
       <el-button @click="showCreateSpace = true" type="primary" size="small">{{$t('message.createSpace')}}</el-button>
       <el-divider/>
@@ -103,8 +102,8 @@ export default {
           console.log('uSpace on parent', uSpace)
           api.rootSpaces.updateRootSpace( this.token, uSpace ).then( (response) => {
             console.log(response.data)
-            const sorted = _.sortBy(response.data.root_spaces_children_parents, 'displayOrder')
-            this.rootSpaces = sorted
+            //const sorted = _.sortBy(response.data.root_spaces_children_parents, 'displayOrder')
+            //this.rootSpaces = sorted
           })
         }
     },
