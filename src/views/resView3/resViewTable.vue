@@ -3,7 +3,7 @@
     ref="resViewTable"
     :data="tableData"
     :row-style="rowStyle"
-    height="520"
+    :height="tableHeight"
     style="width: 100%"
     @cell-click="cellClick"
     @empty-block-click="emptyBlockClick">
@@ -39,6 +39,7 @@
             :endTruncated="scope.row[day.dayString + 'endtruncated']"
             :isFirst = "scope.row[day.dayString + 'isfirst']"
             :isLast = "scope.row[day.dayString + 'islast']"
+            :status = "scope.row[day.dayString + 'status']"
           />
           <emptyBlock
             @emptyBlockClick="emptyBlockClick"
@@ -73,7 +74,8 @@ export default {
     'tDateArray',
     'tableData',
     'trigger',
-    'resSpaceCopy'
+    'resSpaceCopy',
+    'tableHeight'
   ],
   data () {
     return {

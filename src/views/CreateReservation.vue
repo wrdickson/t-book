@@ -30,18 +30,22 @@
       </div>
       <div>
         <span v-if="!selectedCustomer">
-          <el-button
-            size="small"
-            type="primary"
-            @click="showSearchCustomers = true; showCreateCustomer = false">
-            {{ $t('message.searchCustomers') }}
-          </el-button>
-          <el-button
-            size="small"
-            type="primary"
-            @click="showCreateCustomer = true; showSearchCustomers = false">
-             {{ $t('message.createCustomer') }}
-          </el-button> 
+          <el-form size="small">
+            <el-form-item :label="labelCustomer">
+              <el-button
+                size="small"
+                type="primary"
+                @click="showSearchCustomers = true; showCreateCustomer = false">
+                {{ $t('message.search') }}
+              </el-button>
+              <el-button
+                size="small"
+                type="primary"
+                @click="showCreateCustomer = true; showSearchCustomers = false">
+                {{ $t('message.create') }}
+              </el-button> 
+            </el-form-item>
+          </el-form>
         </span>
       </div>
       <SearchCustomers
@@ -183,7 +187,6 @@
                                             this.selectedSpaceId, 
                                             this.selectedPeople, 
                                             this.selectedBeds ).then( response => {
-          console.log(response.data)
           if(response.data.create.execute == true){
             ElMessage({
               type: 'success',
@@ -194,8 +197,7 @@
             //  reset form
             this.resetForm()
             //  tell parent to close drawer
-            this.$emit('createReservation:closeDrawer')
-
+            //this.$emit('createReservation:closeDrawer')
           }
         }).catch( error => {
           console.log('error', error)

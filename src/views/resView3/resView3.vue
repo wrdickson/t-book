@@ -3,14 +3,26 @@
       @resized="leftResize">
       <pane
         :size="leftPaneSize">
+        <div style="display: flex; flex-direction: row-reverse;">
+          <el-button-group>
+            <el-button @click="leftPaneSmaller" size="small">-</el-button>
+            <el-button @click="leftPaneBigger" size="small">+</el-button>
+          </el-button-group>
+        </div>
         <CreateReservation
           v-if="showCreateReservation"
           @createReservation:reloadReservations="getReservations"
-          @createReservation:closeDrawer="showCreateReservationDrawer = false"
         />
-        
+        <ReservationView
+          v-if="showReservationView"
+          :selectedReservation="selectedReservation"
+          @reservation-view:close-view="closeReservationView"
+          @reservation-view:update-reservations="getReservations">
+        </ReservationView>
       </pane>
-      <pane>
+      <pane
+        :size="100 - leftPaneSize"
+      >
         <div style="margin-left: 4px;">
           <span>
             <el-button-group>
@@ -25,7 +37,7 @@
               <el-button type="warning" @click="viewForward1">+1</el-button>
               <el-button type="warning" @click="viewForward7">+7</el-button>
             </el-button-group>&nbsp
-            <el-button type="success" @click="showCreateReservation = true">{{ $t('message.createReservation') }}</el-button>
+            <el-button type="success" @click="showCreateReservationFtn">{{ $t('message.createReservation') }}</el-button>
           </span>
           <ResViewTable
             v-if = "rootSpaces"
@@ -36,6 +48,7 @@
             :tableData="resTableData"
             :trigger="trigger"
             :resSpaceCopy="spaceRecords"
+            :tableHeight="tableHeight"
           />
         </div>
       </pane>
@@ -46,6 +59,7 @@
 import singleDatePicker from '/src/views/resView3/singleDatePicker.vue'
 import ResViewTable from '/src/views/resView3/resViewTable.vue'
 import CreateReservation from '/src/views/CreateReservation.vue'
+import ReservationView from '/src/views/ReservationView/ReservationView.vue'
 import api from '/src/api/api.js'
 import dayjs from 'dayjs'
 import 'dayjs/locale/es'
@@ -71,20 +85,24 @@ export default {
     singleDatePicker,
     ResViewTable,
     CreateReservation,
+    ReservationView,
     Splitpanes,
     Pane
   },
   data () {
     return {
-      leftPaneSize: 25,
+      leftPaneSize: 40,
       overRideSingleDatePicker: '',
       reservationDialog: false,
       reservations: [],
       rootSpaces: null,
       selectedReservation: null,
-      showCreateReservation: false,
+      showCreateReservation: true,
+      showReservationView: false,
       trigger: 1,
-      windowWidth: 0
+      windowHeight: 0,
+      windowWidth: 0,
+      componentTrigger: 0
     }
   },
   computed: {
@@ -208,6 +226,9 @@ export default {
                   //  customer
                   iKey = 'D' +  iDate + 'customer'
                   iRecord[iKey] = iReservation.customer_obj.lastName
+                  //  status
+                  iKey = 'D' + iDate + 'status'
+                  iRecord[iKey] = iReservation.status
             }
           }
 
@@ -286,6 +307,9 @@ export default {
       
       return spaceRecords
     },
+    tableHeight () {
+      return this.windowHeight - 110
+    },
     tDateArray () {
       //  set a reactive locale to day.js for table header formatting
       dayjs.locale(this.locale.name)
@@ -306,22 +330,28 @@ export default {
   },
   methods: {
     clearReservations () {
-      this.presentData = false
+    },
+    closeReservationView () {
+      this.showCreateReservation = true
+      this.showReservationView = false
     },
     emptyCellClick ( obj ) {
       console.log('empty cell selected', obj)
     },
     getReservations () {
-      console.log('getReservations() on resView3')
       api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.token)
       .then( (response) => {
-        console.log('res by range', response.data.reservations)
         this.reservations = response.data.reservations
+        this.componentTrigger += 1
       }).catch( error => {
-          console.log('error', error)
           this.handleRequestError(error)
           this.reservations = []
       })
+    },
+    leftPaneBigger () {
+      this.leftPaneSize += 10
+    },
+    leftPaneSmaller () {
     },
     leftResize ( e ) {
       console.log(e)
@@ -330,9 +360,14 @@ export default {
       this.selectedReservation = _.find(this.reservations, function(o){
         return o.id == resId
       })
-      console.log('sel res', this.selectedReservation)
+      this.showCreateReservation = false
+      this.showReservationView = true
     },
     rowClassName ( obj) {
+    },
+    showCreateReservationFtn () {
+      this.showCreateReservation = true
+      this.showReservationView = false
     },
     singleDateSelected ( nDate ) {
       //  format it
@@ -429,8 +464,10 @@ export default {
      *  Get window width and handle changes
      */
     this.windowWidth = window.innerWidth
+    this.windowHeight = window.innerHeight
     window.addEventListener('resize', (event) => {
       this.windowWidth = window.innerWidth
+      this.windowHeight = window.innerHeight
     }, true);
 
 

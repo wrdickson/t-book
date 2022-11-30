@@ -20,7 +20,7 @@
         <MainMenu/>
       </el-aside>
       <el-container>
-        <el-header class="navHeader">
+        <el-header class="navHeader" height="40px">
             <el-menu
               mode="horizontal"
               :ellipsis="true"

@@ -20,8 +20,8 @@ export default {
 
 <style>
   .emptyBlock {
-    background-color: rgb(176, 212, 226);
-    color: rgb(176, 212, 226);
+    background-color: rgb(194, 194, 194);
+    color: rgb(194, 194, 194);
     width: 100%;
     padding-right: 4px;
     padding-left: 4px;

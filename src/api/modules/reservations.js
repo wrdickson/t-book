@@ -16,6 +16,22 @@ const reservations = {
     return promise
   },
 
+  checkAvailabilityByDatesIgnoreRes: (resId, start, end, token) => {
+    const promise = axios({
+      method: 'post',
+      headers: {
+        'Jwt': token
+      },
+      data: {
+        'res_id': resId,
+        'start_date': start,
+        'end_date': end
+      },
+      url: '/api-book/reservations/range-ignore-res'
+    })
+    return promise
+  },
+
   checkConflicts ( start, end, spaceId, token ) {
     const promise = axios({
       method: 'post',
@@ -70,6 +86,48 @@ const reservations = {
         endDate: endDate
       },
       url: '/api-book/reservations/range/'
+    })
+    return request
+  },
+
+  modifyReservation1 ( resObj, token ) {
+    const request = axios({
+      method: 'post',
+      headers: {
+        'Jwt': token
+      },
+      data: {
+        res_obj: resObj
+      },
+      url: '/api-book/reservations/'
+    })
+    return request
+  },
+
+  reservationCheckin ( resId, token ) {
+    const request = axios({
+      method: 'post',
+      headers: {
+        'Jwt': token
+      },
+      data: {
+        res_id: resId
+      },
+      url: '/api-book/reservations/checkin/'
+    })
+    return request
+  },
+
+  reservationCheckout ( resId, token ) {
+    const request = axios({
+      method: 'post',
+      headers: {
+        'Jwt': token
+      },
+      data: {
+        res_id: resId
+      },
+      url: '/api-book/reservations/checkout/'
     })
     return request
   }

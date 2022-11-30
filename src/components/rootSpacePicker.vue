@@ -38,7 +38,7 @@ export default {
     availableSpaces () {
       //  create an array of available spaces, based on
       //  the avalableSpaceIds prop
-      if(this.rootSpaces){
+      if(this.rootSpaces && this.availableSpaceIds){
         let arr = []
         _.each(this.rootSpaces, (rootSpace) => {
           if( _.includes(this.availableSpaceIds, rootSpace.id) )

@@ -22,9 +22,9 @@
   </el-config-provider>
 </template>
 <script>
-  import { localeStore } from './../stores/locale.js'
-  import { accountStore } from './../stores/account.js'
-  import api from './../api/api.js'
+  import { localeStore } from '/src/stores/locale.js'
+  import { accountStore } from '/src/stores/account.js'
+  import api from '/src/api/api.js'
   import Schema from 'async-validator';
   Schema.warning = function(){};
   export default {
