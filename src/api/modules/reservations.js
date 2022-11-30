@@ -47,6 +47,8 @@ const reservations = {
     })
     return promise
   },
+
+  
   /**
     *@param token string
     *@param spaceId int
@@ -99,7 +101,7 @@ const reservations = {
       data: {
         res_obj: resObj
       },
-      url: '/api-book/reservations/'
+      url: '/api-book/reservations/update/'
     })
     return request
   },
