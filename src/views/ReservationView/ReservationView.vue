@@ -26,6 +26,9 @@
     </el-collapse>
     <EditReservation
       v-if="rootSpaces && rootSpace"
+      
+      :componentKey="componentKey"
+
       :resId="selectedReservation.id"
       :checkin="selectedReservation.checkin"
       :checkout="selectedReservation.checkout"
@@ -48,6 +51,7 @@ import api from '/src/api/api.js'
 import _ from 'lodash'
 import { accountStore } from '/src/stores/account.js'
 import { resViewStore } from '/src/stores/resView.js'
+import { ElMessage } from 'element-plus'
 import useHandleRequestError from '/src/composables/useHandleRequestError.js'
 export default {
   setup () {
@@ -68,6 +72,7 @@ export default {
   ],
   data () {
     return {
+      componentKey: 1,
       rootSpaces: null,
       showHistory: false
     }
@@ -89,17 +94,45 @@ export default {
     },
     modifyReservation1 ( args ) {
       console.log('reservationview gets command', args)
-      api.reservations.modifyReservation1( args, this.token).then( response => {
-        console.log(response)
+      api.reservations.modifyReservation1( args, this.token ).then( response => {
+        if( response.data.success = true ) {
+          //  tell parent (resView3) to reload reservations
+          this.$emit('reservation-view:update-reservations')
+          //  tell the parent (resView3) to update selected reservation
+          //  this will iterate down the event chain and update here
+          //  and on editReservation
+          this.$emit('reservation-view:update-selected-reservation', response.data.current_res )
+          //  increment the componentKey prop to signal we need to clean up
+          this.componentKey += 1
+          ElMessage({
+            type: 'success',
+            message: 'Reservation updated'
+          })
+        } else {
+          ElMessage({
+            type: 'warning',
+            message: 'There was an error'
+          })
+        }
+      }).catch( error => {
+        this.handleRequestError( error )
       })
     },
     reservationCheckin () {
       api.reservations.reservationCheckin ( this.selectedReservation.id, this.token ).then(
         response => {
-          console.log(response)
           if( response.data.checkin == true && response.data.reservation_after_checkin) {
             this.$emit('reservation-view:update-reservations')
             this.$emit('reservation-view:update-selected-reservation', response.data.reservation_after_checkin )
+            ElMessage({
+              type: 'success',
+              message: 'Reservation checked in'
+            })
+          } else {
+            ElMessage({
+              type: 'warning',
+              message: 'There was an error'
+            })
           }
       }).catch( error => {
         this.handleRequestError( error )
@@ -112,6 +145,10 @@ export default {
           if( response.data.checkout == true && response.data.reservation_after_checkout) {
             this.$emit('reservation-view:update-reservations')
             this.$emit('reservation-view:update-selected-reservation', response.data.reservation_after_checkout )
+            ElMessage({
+              type: 'success',
+              message: 'Reservatin checked out'
+            })
           }
       }).catch( error => {
         this.handleRequestError( error )

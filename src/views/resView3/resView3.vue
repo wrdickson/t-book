@@ -17,7 +17,8 @@
           v-if="showReservationView"
           :selectedReservation="selectedReservation"
           @reservation-view:close-view="closeReservationView"
-          @reservation-view:update-reservations="getReservations">
+          @reservation-view:update-reservations="getReservations"
+          @reservation-view:update-selected-reservation="updateSelectedReservation">
         </ReservationView>
       </pane>
       <pane
@@ -352,6 +353,7 @@ export default {
       this.leftPaneSize += 10
     },
     leftPaneSmaller () {
+      this.leftPaneSize -= 10
     },
     leftResize ( e ) {
       console.log(e)
@@ -436,6 +438,9 @@ export default {
     },
     toggleCreateReservationDrawer () {
       this.showCreateReservationDrawer = !this.showCreateReservationDrawer
+    },
+    updateSelectedReservation ( newRes ) {
+      this.selectedReservation = newRes
     },
     viewBack1 () {
       const newDate = dayjs(resViewStore().startDate).subtract( 1, 'days').format('YYYY-MM-DD')

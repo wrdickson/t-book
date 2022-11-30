@@ -107,12 +107,13 @@ import { accountStore } from '/src/stores/account.js'
 import { localeStore } from '/src/stores/locale.js'
 import SearchCustomers from '/src/components/searchCustomers.vue'
 import CreateCustomer from '/src/components/createCustomer.vue'
+import { ElMessage } from 'element-plus'
 import dayjs from 'dayjs'
 import _ from 'lodash'
 
 export default {
   name: 'EditReservation',
-  props: ['resId', 'checkin', 'checkout', 'people', 'beds', 'spaceId', 'customer', 'customerFirst', 'customerLast' ],
+  props: ['componentKey', 'resId', 'checkin', 'checkout', 'people', 'beds', 'spaceId', 'customer', 'customerFirst', 'customerLast' ],
   emits: [ 'edit-reservation:modify-reservation-1' ],
   components: {
     SearchCustomers,
@@ -133,8 +134,6 @@ export default {
       cCustomerFirst: this.customerFirst,
       cCustomerLast: this.customerLast,
 
-      //  used to reset customer select, customer create
-      componentKey: 0,
 
 
       availableSpaceIds: [],
@@ -275,6 +274,7 @@ export default {
       this.showSearchCustomers = false
     },
     updateReservation () {
+      /*
       console.log('customer', this.cCustomer)
       console.log('spaceId', this.selectedSpace )
       console.log('people', this.cPeople )
@@ -283,6 +283,7 @@ export default {
       console.log('checkout', this.cCheckoutF)
       console.log('customerFirst', this.cCustomerFirst)
       console.log('customerLast', this.cCustomerLast)
+      */
       const args = {
         res_id: this.cResId,
         customer: this.cCustomer,
@@ -313,6 +314,11 @@ export default {
       
   },
   watch: {
+    //  watch component key and revert form to current props when changed
+    //  the component will have the new reservation data ( or SHOULD )
+    componentKey ( i ) {
+      this.revertToProps()
+    },
     //  watch the props and change the copy accordingly
     resId ( i ) {
       this.cResId = i
