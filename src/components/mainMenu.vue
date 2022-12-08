@@ -1,6 +1,8 @@
 <template>
   <el-menu @select="menuSelect" :router="true">
+    <localeSwitch/>
     <el-menu-item index="/Home">{{ $t('message.homePage') }}</el-menu-item>
+    <el-menu-item index="/Dashboard">Dashboard</el-menu-item>
     <el-menu-item
       v-if="account.permission > 0" 
       index="/resView3">
@@ -18,10 +20,12 @@
 </template>
 
 <script>
-  import { accountStore } from './../stores/account.js'
+  import localeSwitch from '/src/components/localeSwitch.vue'
+  import { accountStore } from '/src/stores/account.js'
   export default {
     name: 'MainMenu',
     emits: [ 'mainMenu-select' ],
+    components: { localeSwitch },
     computed: {
       account () {
         return accountStore().account

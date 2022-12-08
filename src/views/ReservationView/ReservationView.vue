@@ -1,17 +1,58 @@
 <template>
+  <el-dialog
+    v-model="showFolioDialog"
+    :fullscreen="true"
+    :destroy-on-close="false"
+    class="myDialogClass"
+  >
+    <FolioView
+      :folioId="selectedReservation.folio"
+      :selectedReservation="selectedReservation"
+      :componentKey="componentKey"
+    ></FolioView>
+  </el-dialog>
   <div v-if="rootSpaces && rootSpace" class="wrapper">
     <div><font-awesome-icon @click="closeReservationView" color="#f56c6c" icon="fa-window-close" size="xl" style="float: right;"/></div><br/>
     <div>{{ selectedReservation.customer_obj.firstName }}&nbsp{{ this.selectedReservation.customer_obj.lastName }}</div>
-    <div>{{  $t('message.arrival') }}: {{ selectedReservation.checkin }}</div>
-    <div>{{ $t('message.departure') }}: {{ selectedReservation.checkout }}</div>
-    <div>{{ $t('message.spaceLabel') }}: {{ rootSpace.title }}</div>
-    <div v-if="selectedReservation.status == 0">
-      <el-button type="success" @click="reservationCheckin">{{ $t('message.checkin') }}</el-button>
+    <div>
+      <span>{{ selectedReservation.checkin }}</span>
+      <span> : </span>
+      <span>{{ selectedReservation.checkout }}</span>
     </div>
-    <div v-if="selectedReservation.status == 1">
-      <el-button type="info" @click="reservationCheckout">{{ $t('message.checkout') }}</el-button>
+    <div>{{ $t('message.spaceLabel') }}: {{ rootSpace.title }}</div>
+    <div>{{ $t('message.people') }}: {{ selectedReservation.people }}</div>
+    <div>{{ $t('message.beds') }}: {{ selectedReservation.beds }}</div>
+    <div>Res Id : {{ selectedReservation.id }}</div>
+    <div>
+      <span v-if="selectedReservation.status == 0">
+        <el-button type="success" @click="reservationCheckin">{{ $t('message.checkin') }}</el-button>
+      </span>
+      <span v-if="selectedReservation.status == 1">
+        <el-button type="info" @click="reservationCheckout">{{ $t('message.checkout') }}</el-button>
+      </span>
+      <span>
+        <el-button @click="showFolioDialog = true" type="primary">Folio</el-button>
+      </span>
     </div>
     <el-collapse>
+      <el-collapse-item title="Edit Reservation" name="2">
+        <EditReservation
+          v-if="rootSpaces && rootSpace"
+          
+          :componentKey="componentKey"
+
+          :resId="selectedReservation.id"
+          :checkin="selectedReservation.checkin"
+          :checkout="selectedReservation.checkout"
+          :people="selectedReservation.people"
+          :beds="selectedReservation.beds"
+          :spaceId="selectedReservation.space_id"
+          :customer="selectedReservation.customer"
+          :customerFirst="selectedReservation.customer_obj.firstName"
+          :customerLast="selectedReservation.customer_obj.lastName"
+          @edit-reservation:modify-reservation-1="modifyReservation1">
+        </EditReservation>
+      </el-collapse-item>
       <el-collapse-item title="History" name="1">
         <table class="historyTable">
           <tbody>
@@ -24,29 +65,14 @@
         </table>
       </el-collapse-item>
     </el-collapse>
-    <EditReservation
-      v-if="rootSpaces && rootSpace"
-      
-      :componentKey="componentKey"
 
-      :resId="selectedReservation.id"
-      :checkin="selectedReservation.checkin"
-      :checkout="selectedReservation.checkout"
-      :people="selectedReservation.people"
-      :beds="selectedReservation.beds"
-      :spaceId="selectedReservation.space_id"
-      :customer="selectedReservation.customer"
-      :customerFirst="selectedReservation.customer_obj.firstName"
-      :customerLast="selectedReservation.customer_obj.lastName"
-      @edit-reservation:modify-reservation-1="modifyReservation1"
-    >
-    </EditReservation>
  
  </div>
 </template>
 
 <script>
 import EditReservation from '/src/views/ReservationView/editReservation.vue'
+import FolioView from '/src/views/FolioView/FolioView.vue'
 import api from '/src/api/api.js'
 import _ from 'lodash'
 import { accountStore } from '/src/stores/account.js'
@@ -63,7 +89,7 @@ export default {
   props: [ 
     'selectedReservation'
   ],
-  components: { EditReservation },
+  components: { EditReservation, FolioView },
 
   emits: [ 
     'reservation-view:close-view',
@@ -74,7 +100,8 @@ export default {
     return {
       componentKey: 1,
       rootSpaces: null,
-      showHistory: false
+      showHistory: false,
+      showFolioDialog: false
     }
   },
   computed: {
@@ -170,6 +197,13 @@ export default {
 </script>
 
 <style>
+
+.myDialogClass header {
+  
+}
+
+
+
 
 .historyTable {
   display: block;

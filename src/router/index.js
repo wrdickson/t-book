@@ -2,10 +2,9 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '/src/views/Home.vue'
 import Login from '/src/views/Login.vue'
 import Logoff from '/src/views/Logoff.vue'
-import resView3 from '/src/views/resView3/resView3.vue'
-import CreateReservation from '/src/views/CreateReservation.vue'
 import Composables from '/src/views/Composables.vue'
 import SpaceEdit from '/src/views/SpaceEdit/SpaceEdit.vue'
+import Dashboard from '/src/views/Dashboard/Dashboard.vue'
 
 const routes = [
     {
@@ -17,6 +16,11 @@ const routes = [
       path: '/Composables',
       name: 'Composables',
       component: Composables
+    },
+    {
+      path: '/Dashboard',
+      name: 'Dashboard',
+      component: Dashboard
     },
     {
       path: '/Home',
@@ -36,7 +40,7 @@ const routes = [
     {
       path: '/resView3',
       name: 'resView3',
-      component: resView3
+      component: () => import('/src/views/resView3/resView3.vue')
     },
     {
       path: '/SpaceEdit',

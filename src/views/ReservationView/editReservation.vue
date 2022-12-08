@@ -32,12 +32,12 @@
     </div>
     <SearchCustomers
       v-if="showSearchCustomers"
-      :componentKey="componentKey"
+      :componentKey="componentKey2"
       @searchCustomers:customerSelected="searchCustomerSelected">
     </SearchCustomers>
     <CreateCustomer
       v-if="showCreateCustomer"
-      :componentKey="componentKey"
+      :componentKey="componentKey2"
       @createCustomer:customerCreated="createCustomerSelected">
     </CreateCustomer>
     <hr/>
@@ -69,6 +69,7 @@
               v-model="cDateRange"
               type="daterange"
               size="small"
+              format="D-MMM-YYYY"
               :clearable=false
               :range-separator="rangePickerSeperator"
               :start-placeholder="rangePickerStartPlaceholder"
@@ -134,7 +135,9 @@ export default {
       cCustomerFirst: this.customerFirst,
       cCustomerLast: this.customerLast,
 
-
+      // this component has 'componentKey' as a prop,
+      //  so we make another to pass to child componenets
+      componentKey2: 0,
 
       availableSpaceIds: [],
 
@@ -270,7 +273,7 @@ export default {
       this.cCustomerFirst = e.firstName
       this.cCustomerLast = e.lastName
       //  reset the components
-      this.componentKey += 1
+      this.componentKey2 += 1
       this.showSearchCustomers = false
     },
     updateReservation () {

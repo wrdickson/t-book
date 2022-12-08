@@ -4,7 +4,11 @@
     :data="tableData"
     :row-style="rowStyle"
     :height="tableHeight"
-    style="width: 100%"
+    row-class-name="resview-row"
+    cell-class-name="resview-table-cell"
+    header-cell-class-name="resview-header-cell"
+    header-row-class-name="resview-header-row"
+    style="width: 100%; padding: 0px"
     @cell-click="cellClick"
     @empty-block-click="emptyBlockClick">
 
@@ -194,14 +198,17 @@ export default {
 </script>
 
 <style>
-.cell {
+.resview-table-cell .cell {
   padding: 0px !important;
 }
-.el-table .el-table__cell{
+.resview-header-cell .cell  {
   padding: 0px !important;
 }
-.el-scrollbar__bar.is-horizontal{
-  margin-top: -112px !important;
-  height: 9px !important;
+.resview-row .el-table__cell {
+  padding: 0px !important;
 }
+.resview-header-row th {
+  padding: 0px !important;
+}
+
 </style>

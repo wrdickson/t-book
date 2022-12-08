@@ -5,7 +5,7 @@ import _ from 'lodash'
 export const resViewStore = defineStore({
   id: 'resViewStore',
   state: () => ({
-    startDate: dayjs().format('YYYY-MM-DD'),
+    startDate: dayjs().subtract( 1, 'days').format('YYYY-MM-DD'),
     showHideRootSpaceCopy: null,
     scrollLeft: 0,
     scrollTop: 0

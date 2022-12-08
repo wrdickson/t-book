@@ -5,8 +5,11 @@
         :size="leftPaneSize">
         <div style="display: flex; flex-direction: row-reverse;">
           <el-button-group>
-            <el-button @click="leftPaneSmaller" size="small">-</el-button>
-            <el-button @click="leftPaneBigger" size="small">+</el-button>
+            <el-button type="warning" @click="leftPane10">&lt&lt</el-button>
+            <el-button type="warning" @click="leftPane30">&lt</el-button>
+            <el-button type="warning" @click="leftPane50">|</el-button>
+            <el-button type="warning" @click="leftPane70">&gt</el-button>
+            <el-button type="warning" @click="leftPane100">&gt&gt</el-button>
           </el-button-group>
         </div>
         <CreateReservation
@@ -92,7 +95,7 @@ export default {
   },
   data () {
     return {
-      leftPaneSize: 40,
+      leftPaneSize: 30,
       overRideSingleDatePicker: '',
       reservationDialog: false,
       reservations: [],
@@ -342,18 +345,29 @@ export default {
     getReservations () {
       api.reservations.getReservationsByRange( this.resViewStartDate, this.resViewEndDate, this.token)
       .then( (response) => {
+        console.log('res fetch from rv3 getR()')
         this.reservations = response.data.reservations
         this.componentTrigger += 1
+
       }).catch( error => {
           this.handleRequestError(error)
           this.reservations = []
       })
     },
-    leftPaneBigger () {
-      this.leftPaneSize += 10
+    leftPane100 () {
+      this.leftPaneSize = 100
     },
-    leftPaneSmaller () {
-      this.leftPaneSize -= 10
+    leftPane30 () {
+      this.leftPaneSize = 30
+    },
+    leftPane50 () {
+      this.leftPaneSize = 50
+    },
+    leftPane70 () {
+      this.leftPaneSize = 70
+    },
+    leftPane10 () {
+      this.leftPaneSize = 5
     },
     leftResize ( e ) {
       console.log(e)

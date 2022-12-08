@@ -3,6 +3,7 @@
     <el-date-picker
       v-model="selectedDate"
       type="date"
+      format="D-MMM-YYYY"
       :placeholder="datepickerPlaceholder"
       :size="size"
     />

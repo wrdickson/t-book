@@ -100,6 +100,7 @@ export default {
       this.authCompleted = true
       this.$router.push('/Login')
     }
+
   }
 }
 </script>

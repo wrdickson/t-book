@@ -10,6 +10,7 @@
               v-model="dRange"
               type="daterange"
               size="small"
+              format="D-MMM-YYYY"
               :clearable=false
               :range-separator="rSeperator"
               :start-placeholder="startPlaceholder"

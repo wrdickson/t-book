@@ -9,5 +9,5 @@ export default defineConfig({
       '/api-book': 'http://localhost'
     }
   },
-  base: 'https://trekbill.com/t-book/'
+  base: ''
 })
