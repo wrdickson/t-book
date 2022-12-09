@@ -77,6 +77,7 @@ import api from '/src/api/api.js'
 import _ from 'lodash'
 import { accountStore } from '/src/stores/account.js'
 import { resViewStore } from '/src/stores/resView.js'
+import { rootSpacesStore } from '/src/stores/rootSpaces.js'
 import { ElMessage } from 'element-plus'
 import useHandleRequestError from '/src/composables/useHandleRequestError.js'
 export default {
@@ -183,13 +184,11 @@ export default {
     }
   },
   mounted () {
-    //  get space records
+    //  get rootSpaces . . . 
     if( resViewStore().showHideRootSpaceCopy ) {
       this.rootSpaces = resViewStore().showHideRootSpaceCopy
     } else { 
-      api.rootSpaces.getRootSpaces( this.token ).then( response => {
-        this.rootSpaces = response.data.root_spaces_children_parents
-      })
+      this.rootSpaces = rootSpacesStore().rootSpaces
     }
   }
 }
@@ -197,13 +196,6 @@ export default {
 </script>
 
 <style>
-
-.myDialogClass header {
-  
-}
-
-
-
 
 .historyTable {
   display: block;

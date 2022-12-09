@@ -106,6 +106,7 @@ import api from '/src/api/api.js'
 import dajs from 'dayjs'
 import { accountStore } from '/src/stores/account.js'
 import { localeStore } from '/src/stores/locale.js'
+import { rootSpacesStore } from '/src/stores/rootSpaces.js'
 import SearchCustomers from '/src/components/searchCustomers.vue'
 import CreateCustomer from '/src/components/createCustomer.vue'
 import { ElMessage } from 'element-plus'
@@ -178,8 +179,6 @@ export default {
         this.cCheckout = dayjs(i[1]).format('YYYY-MM-DD')
       }
     },
-
-
     editReady () {
       if( this.selectedSpace ){
         return true
@@ -194,7 +193,6 @@ export default {
     token () {
       return accountStore().token
     },
-
 
     peoplePickerLabel () {
       return this.$t('message.people')
@@ -230,11 +228,7 @@ export default {
       this.showCreateCustomer = false
     },
 
-
     loadAvailableSpaces () {
-      console.log('lAS()')
-      console.log('this.rootSpaces', this.rootSpaces)
-      console.log('this.availableSpaceIds', this.availableSpaceIds)
       let arr = []
         _.each(this.rootSpaces, (rootSpace) => {
           if( _.includes(this.availableSpaceIds, rootSpace.id) )
@@ -307,14 +301,11 @@ export default {
         response => {
           console.log(response)
           this.availableSpaceIds = response.data.availableSpaceIds
-      }).then(
-        api.rootSpaces.getRootSpaces( this.token ).then( response => {
-            this.rootSpaces = response.data.root_spaces_children_parents
-            this.loadAvailableSpaces()
-            //this.selectedSpace = this.cSpaceId
-        })
-     )
-      
+          //  get initial rootSpaces data
+          this.rootSpaces = rootSpacesStore().rootSpaces
+          this.loadAvailableSpaces()
+
+      })
   },
   watch: {
     //  watch component key and revert form to current props when changed

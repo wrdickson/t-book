@@ -5,7 +5,7 @@
     after checking if we have a user/token in localStorage, and verifying that.
     It's an async operation, so we have to wait . . . 
   -->
-  <div v-if="authCompleted">
+  <div v-if="dataLoaded">
     <el-drawer
       v-model="drawerVisible"
       size="180px"
@@ -42,6 +42,10 @@
 
 <script>
 import { accountStore } from './stores/account.js'
+import { saleTypesStore } from './stores/saleTypes.js'
+import { saleTypeGroupsStore } from './stores/saleTypeGroups.js'
+import { taxTypesStore } from './stores/taxTypes.js'
+import { rootSpacesStore } from './stores/rootSpaces.js'
 import api from './api/api.js'
 import MainMenu from './components/mainMenu.vue'
 import userMenu from './components/userMenu.vue'
@@ -57,20 +61,58 @@ export default {
       //  we don't want the app to start until we have completed
       //  the auth process, the v-if in the wrapper div above
       //  will accomplish this
-      authCompleted: false
+      authCompleted: false,
+      rootSpaces: null,
+      saleTypes: null,
+      saleTypeGropus: null,
+      taxTypes: null
     }
   },
   computed: {
-    account: () => {
+    account() {
       return accountStore().account
     },
-    token: () => {
+    dataLoaded() {
+      if( this.authCompleted && this.rootSpaces && this.saleTypes && this.saleTypeGroups && this.taxTypes ) {
+        return true
+      } else {
+        return false
+      }
+    },
+    token() {
       return accountStore().token
     }
   },
   methods: {
     hideDrawer () {
       this.drawerVisible = false
+    },
+    loadInitialData () {
+      //  rootSpaces
+      api.rootSpaces.getRootSpaces( this.token ).then( response => {
+          rootSpacesStore().setRootSpaces( response.data.root_spaces_children_parents )
+          this.rootSpaces = response.data.root_spaces_children_parents
+      })
+
+      //  saleTypes
+      api.saleTypes.getSaleTypes( this.token ).then( response => {
+        //  set the store
+        saleTypesStore().setSaleTypes(response.data.all_sale_types)
+        this.saleTypes = response.data.all_sale_types
+      })
+
+      //  sale type groups
+      api.saleTypeGroups.getSaleTypeGroups( this.token ).then( response => {
+        saleTypeGroupsStore().setSaleTypeGroups( response.data.all_sale_type_groups )
+        this.saleTypeGroups = response.data.all_sale_type_groups
+      })
+
+      // tax types
+      api.taxTypes.getTaxTypes( this.token ).then( response => {
+        //  set the store
+        taxTypesStore().setTaxTypes(response.data.all_tax_types)
+        this.taxTypes = response.data.all_tax_types
+      })
     },
     showDrawer () {
       this.drawerVisible = true
@@ -89,18 +131,20 @@ export default {
           accountStore().setAccount( response.data.decoded.account )
           accountStore().setToken( token )
           this.authCompleted = true
+          this.loadInitialData()
         }
       }).catch( err => {
         accountStore().setAccountToGuest()
         this.authCompleted = true
+        this.loadInitialData
         this.$router.push('/Login')
       })
     } else {
       accountStore().setAccountToGuest()
       this.authCompleted = true
+      this.loadInitialData
       this.$router.push('/Login')
     }
-
   }
 }
 </script>

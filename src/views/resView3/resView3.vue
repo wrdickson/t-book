@@ -73,6 +73,7 @@ import _ from 'lodash'
 import { accountStore } from '/src/stores/account.js'
 import { localeStore } from '/src/stores/locale.js'
 import { resViewStore } from '/src/stores/resView.js'
+import { rootSpacesStore } from '/src/stores/rootSpaces.js'
 import useHandleRequestError from '/src/composables/useHandleRequestError.js'
 import { Splitpanes, Pane } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
@@ -495,9 +496,7 @@ export default {
     if( resViewStore().showHideRootSpaceCopy ) {
       this.rootSpaces = resViewStore().showHideRootSpaceCopy
     } else { 
-      api.rootSpaces.getRootSpaces( this.token ).then( response => {
-        this.rootSpaces = response.data.root_spaces_children_parents
-      })
+      this.rootSpaces = rootSpacesStore().rootSpaces
     }
     this.getReservations()
   }
