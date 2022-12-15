@@ -5,7 +5,7 @@
     after checking if we have a user/token in localStorage, and verifying that.
     It's an async operation, so we have to wait . . . 
   -->
-  <div v-if="dataLoaded">
+  <div v-if="authCompleted">
     <el-drawer
       v-model="drawerVisible"
       size="180px"
@@ -46,6 +46,7 @@ import { saleTypesStore } from './stores/saleTypes.js'
 import { saleTypeGroupsStore } from './stores/saleTypeGroups.js'
 import { taxTypesStore } from './stores/taxTypes.js'
 import { rootSpacesStore } from './stores/rootSpaces.js'
+import { paymentTypesStore } from './stores/paymentTypes.js'
 import api from './api/api.js'
 import MainMenu from './components/mainMenu.vue'
 import userMenu from './components/userMenu.vue'
@@ -112,6 +113,12 @@ export default {
         //  set the store
         taxTypesStore().setTaxTypes(response.data.all_tax_types)
         this.taxTypes = response.data.all_tax_types
+      })
+
+      // payment types
+      api.paymentTypes.getActivePaymentTypes( this.token ).then ( response => {
+        paymentTypesStore().setActivePaymentTypes( response.data.active_payment_types )
+        this.activePaymentTypes = response.data.active_payment_types
       })
     },
     showDrawer () {

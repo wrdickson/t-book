@@ -2,8 +2,7 @@
   <el-dialog
     v-model="showFolioDialog"
     :fullscreen="true"
-    :destroy-on-close="false"
-    class="myDialogClass"
+    :destroy-on-close="true"
   >
     <FolioView
       :folioId="selectedReservation.folio"

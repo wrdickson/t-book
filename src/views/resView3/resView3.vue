@@ -1,4 +1,4 @@
-<template>
+<template v-if="rootSpaces">
     <splitpanes
       @resized="leftResize">
       <pane
@@ -146,6 +146,7 @@ export default {
 
       let spaceRecords
 
+      //  SUPER IMPORTANT FOR CORRECT PRESENTATION
       //  we have to clear out all the properties on the root spaces
       //  that represent a res block for presentation.
       //  These property keys all start with "D"
@@ -159,6 +160,12 @@ export default {
         })
       })
 
+
+      /**
+       * this is where we generate a properly formatted piece of data
+       * to hand to resViewTable, which will
+       * hand it to the el-table component as THE KEY PROP
+       */
       spaceRecords = this.rootSpaces
       //  iterate through the reservations and add data to the appropriate array item
       _.each(this.reservations, (iReservation) => {
@@ -498,6 +505,7 @@ export default {
     } else { 
       this.rootSpaces = rootSpacesStore().rootSpaces
     }
+    // and . . .   LOAD THE RESERVATIONS
     this.getReservations()
   }
 }

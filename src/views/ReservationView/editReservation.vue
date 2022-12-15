@@ -109,7 +109,7 @@ import { localeStore } from '/src/stores/locale.js'
 import { rootSpacesStore } from '/src/stores/rootSpaces.js'
 import SearchCustomers from '/src/components/searchCustomers.vue'
 import CreateCustomer from '/src/components/createCustomer.vue'
-import { ElMessage } from 'element-plus'
+
 import dayjs from 'dayjs'
 import _ from 'lodash'
 

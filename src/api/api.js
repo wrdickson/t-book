@@ -7,6 +7,9 @@ import spaceTypes from './modules/spaceTypes.js'
 import taxTypes from './modules/apiTaxTypes.js'
 import saleTypes from './modules/apiSaleTypes.js'
 import saleTypeGroups from './modules/apiSaleTypeGroups.js'
+import paymentTypes from './modules/apiPaymentTypes.js'
+import payments from './modules/apiPayments.js'
+import folios from './modules/apiFolios.js'
 
 const api = {
   account: account,
@@ -17,7 +20,10 @@ const api = {
   spaceTypes: spaceTypes,
   taxTypes: taxTypes,
   saleTypes: saleTypes,
-  saleTypeGroups: saleTypeGroups
+  saleTypeGroups: saleTypeGroups,
+  paymentTypes: paymentTypes,
+  payments: payments,
+  folios: folios
 }
 
 export default api

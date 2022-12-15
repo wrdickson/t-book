@@ -3,7 +3,6 @@
   <el-form
     label-width="120px"
     size="small"
-    class="my-form"
   >
     <el-form-item :label="labelCustomer">
       <el-col :span="11">
@@ -21,21 +20,19 @@
   </el-form>
   <el-table
     :data="customers"
-    :default-sort="{ prop: 'lastName', order: 'descending' }"
+    size="small"
     style="width: 100%"
     height="200px"
     @row-click="selectCustomer"
     >
     <el-table-column
       fixed
-      sortable
       prop="lastName"
       :label="labelLastName"
       width="100"
     ></el-table-column>
     <el-table-column
       fixed
-      sortable
       prop="firstName"
       :label="labelFirstName"
       width="100"

@@ -11,7 +11,7 @@
       </el-form-item>
       <el-form-item label="Qty" style="width: 60px">
         <el-select v-model="iSale.quantity">
-          <template v-for="n in 20">
+          <template v-for="n in saleQuantities">
             <el-option  :label="n" :value="n"></el-option>
           </template>
         </el-select>
@@ -34,10 +34,10 @@
     </el-form>
     <el-form v-if="iSale" size="small">
       <el-form-item label="Description">
-        <el-input v-model="description"></el-input>
+        <el-input v-model="iSale.description"></el-input>
       </el-form-item>
     </el-form>
-    <el-form v-if="saleTotal && saleTotal > 0">
+    <el-form v-if="saleTotal && saleTotal > 0 || saleTotal < 0">
       <el-form-item>
         <el-button @click="addToSale" size="small" type="success">Add to sale</el-button>
       </el-form-item>
@@ -51,12 +51,16 @@ import { taxTypesStore } from '/src/stores/taxTypes.js'
 import _ from 'lodash'
 export default {
   name: 'ProcessSaleType',
-  props: [ 'saleType' ],
+  props: [ 'saleType', 'processSaleTypeResetKey' ],
   emits: [ 'process-sale-type:add-sale-item' ],
   data () {
     return {
-      iSale: this.saleType,
-      description: ''
+      description: '',
+      saleQuantities: [-5, -4, -3, -2, -1, 1, 2, 3, 4, 5 ],
+      //  this will be a non reactive copy of the prop
+      //  we need to modify it, so see iSale in computed()
+      iSale: null
+      
     }
   },
   computed: {
@@ -96,9 +100,9 @@ export default {
           const selTaxType = _.find(this.taxTypes, o => {
             return o.id == taxTypeId
           })
-          taxSpreadObj.taxTypeId = taxTypeId
-          taxSpreadObj.taxRate = selTaxType.tax_rate
-          taxSpreadObj.tax = Number( selTaxType.tax_rate * this.subtotal ).toFixed(2)
+          taxSpreadObj.i = taxTypeId
+          taxSpreadObj.r = selTaxType.tax_rate
+          taxSpreadObj.t = Number( selTaxType.tax_rate * this.subtotal ).toFixed(2)
           taxSpreadArr.push(taxSpreadObj)
         })
         return taxSpreadArr
@@ -127,35 +131,34 @@ export default {
         saleSubtotal: this.subtotal,
         saleTax: this.totalTax,
         saleTotal: this.saleTotal,
-        taxTypes: this.iSale.taxTypes,
+        taxTypes: this.iSale.tax_types,
         taxSpread: this.taxSpread,
-        description: this.description
+        description: this.iSale.description
       }
       this.$emit( 'process-sale-type:add-sale-item', saleItem )
     }
   },
   watch: {
-    saleType ( newVal ) {
-      //  reset form when saleType prop changes . . .
-      this.iSale = this.saleType
-      //  give it an initial quantity
-      this.iSale.quantity = 1
-      //  set a price property, changes whether this is fixed price or not
-      if(this.iSale.is_fixed_price) {
-        this.iSale.price = Number(this.iSale.fixed_price).toFixed(2)
+    saleType (newVal ) {
+      console.log('watch on process sale type', newVal)
+      //  handle newval is null
+      if( newVal ) {
+        newVal.quantity = 1
+        newVal.description = newVal.title
+        if(newVal.is_fixed_price) {
+          newVal.price = newVal.fixed_price
+        } else {
+          newVal.price = null
+        }
+        this.iSale = newVal
       } else {
-        this.iSale.price = null
+        this.iSale = null
       }
-      //  set the initial description property as sale type title . . .can be changed
-      this.description = this.saleType.title
-      
     }
   }
+
 }
 </script>
 
-<style scoped>
-.process-sale-wrapper {
-  min-height: 95px;
-}
+<style>
 </style>
