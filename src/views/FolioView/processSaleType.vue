@@ -16,10 +16,10 @@
           </template>
         </el-select>
       </el-form-item>
-      <el-form-item v-if="iSale.is_fixed_price" label="Amount" style="width: 80px">
+      <el-form-item v-if="Boolean(Number(iSale.is_fixed_price))" label="Amount" style="width: 80px">
         <el-input disabled v-model="iSale.price"></el-input>
       </el-form-item>
-      <el-form-item v-if="!iSale.is_fixed_price" label="Amount" style="width: 80px">
+      <el-form-item v-if="!Boolean(Number(iSale.is_fixed_price))" label="Amount" style="width: 80px">
         <el-input v-model="iSale.price"></el-input>
       </el-form-item>
       <el-form-item label="Subtotal" style="width: 80px">
