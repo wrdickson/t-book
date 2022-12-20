@@ -166,6 +166,8 @@ export default {
        * to hand to resViewTable, which will
        * hand it to the el-table component as THE KEY PROP
        */
+
+       // we are manipulating rootSpaces here
       spaceRecords = this.rootSpaces
       //  iterate through the reservations and add data to the appropriate array item
       _.each(this.reservations, (iReservation) => {
@@ -488,7 +490,7 @@ export default {
   },
   mounted () {
     /**
-     *  Get window width and handle changes
+     *  Get window width and height and handle changes
      */
     this.windowWidth = window.innerWidth
     this.windowHeight = window.innerHeight
@@ -497,7 +499,9 @@ export default {
       this.windowHeight = window.innerHeight
     }, true);
 
-
+    //  SUPER IMPORTANT that we are referencing the hide/show iteration of
+    //  space records if they exist.  these hold the show/hide children in
+    //  current state, so the user has a continuous experience of show/hide children
     //  do we have a showHideRootSpaceCopy in store?
     //  get space records
     if( resViewStore().showHideRootSpaceCopy ) {
